@@ -254,7 +254,14 @@ namespace PasswordReader.Services
 #pragma warning disable CA1416 // Validate platform compatibility
             using (var cipher = new AesGcm(key))
             {
-                cipher.Decrypt(iv, chipherText, tag, plainText);
+                try
+                {
+                    cipher.Decrypt(iv, chipherText, tag, plainText);
+                }
+                catch
+                {
+                    throw new ArgumentException("Der Schlüssel ist ungültig");
+                }
             }
 #pragma warning restore CA1416 // Validate platform compatibility
             return plainText;

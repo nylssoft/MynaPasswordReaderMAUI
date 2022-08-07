@@ -22,7 +22,7 @@ namespace PasswordReader.Pages;
 [QueryProperty("Item", "item")]
 public partial class PasswordItemPage : ContentPage
 {
-    private PasswordItemViewModel _model;
+    private readonly PasswordItemViewModel _model;
     
     private const string HIDDEN = "*********";
 
