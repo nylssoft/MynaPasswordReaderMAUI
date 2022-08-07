@@ -1,2 +1,2 @@
 # MynaPasswordReaderMAUI
-Example project for Microsoft MAUI framework. Reads passwords published with MynaPasswordManager
+Example project for Microsoft MAUI framework. Reads passwords published with MynaPasswordManager on stockfleth.eu.
