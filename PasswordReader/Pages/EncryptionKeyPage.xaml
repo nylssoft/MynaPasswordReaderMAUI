@@ -6,7 +6,7 @@
     <ScrollView>
         <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="80,*" Margin="20" RowSpacing="20">
             <Label Text="Schlüssel:" VerticalOptions="Center"/>
-            <Entry Text="{Binding EncryptionKey}" Grid.Column="1" />
+            <Entry Text="{Binding EncryptionKey}" Grid.Column="1" IsSpellCheckEnabled="False"/>
             <Button Text="Speichern" Clicked="Save_Clicked" Grid.Row="2" Grid.ColumnSpan="2" WidthRequest="100" 
                 IsEnabled="{Binding CanChangeEncryptionKey}"/>
         </Grid>
