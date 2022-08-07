@@ -6,7 +6,7 @@
     <ScrollView>
         <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="120,*" Margin="20" RowSpacing="20">
             <Label Text="Sicherheitscode:" VerticalOptions="Center"/>
-            <Entry x:Name="entrySecurityCode" Text="{Binding SecurityCode}" Grid.Column="1" IsEnabled="{Binding CanConfirmSecurityCode}" Keyboard="Numeric" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" Completed="SecurityCode_Completed"/>
+            <Entry Text="{Binding SecurityCode}" Grid.Column="1" IsEnabled="{Binding CanConfirmSecurityCode}" Keyboard="Numeric" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" Completed="SecurityCode_Completed"/>
             <Button Text="Bestätigen" Clicked="Confirm_Clicked"  Grid.Row="2" Grid.ColumnSpan="2" WidthRequest="100" IsEnabled="{Binding CanConfirmSecurityCode}"/>
         </Grid>
     </ScrollView>

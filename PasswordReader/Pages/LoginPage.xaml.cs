@@ -94,8 +94,9 @@ public partial class LoginPage : ContentPage
 
     private void Password_Completed(object sender, EventArgs e)
     {
-        entryPassword.Unfocus();
-        Login_Clicked(sender, e);
+        // does not work, keyboard remains open
+        // https://github.com/dotnet/maui/pull/7635
+        // Login_Clicked(sender, e);
     }
 
 }

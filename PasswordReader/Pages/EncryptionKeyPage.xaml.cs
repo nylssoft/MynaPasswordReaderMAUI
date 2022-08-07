@@ -45,7 +45,8 @@ public partial class EncryptionKeyPage : ContentPage
 
     private void EncryptionKey_Completed(object sender, EventArgs e)
     {
-        entryEncryptionKey.Unfocus();
-        Save_Clicked(sender, e);
+        // does not work, keyboard remains open
+        // https://github.com/dotnet/maui/pull/7635
+        // Save_Clicked(sender, e);
     }
 }

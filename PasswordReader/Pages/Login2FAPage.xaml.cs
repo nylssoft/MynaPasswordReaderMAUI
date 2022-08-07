@@ -71,7 +71,8 @@ public partial class Login2FAPage : ContentPage
 
     private void SecurityCode_Completed(object sender, EventArgs e)
     {
-        entrySecurityCode.Unfocus();
-        Confirm_Clicked(sender, e);
+        // does not work, keyboard remains open
+        // https://github.com/dotnet/maui/pull/7635
+        // Confirm_Clicked(sender, e);
     }
 }
