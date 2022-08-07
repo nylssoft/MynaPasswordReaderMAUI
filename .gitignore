@@ -1,3 +1,4 @@
 /.vs
 /PasswordReader/obj
+/PasswordReader/bin
 /PasswordReader/PasswordReader.csproj.user
