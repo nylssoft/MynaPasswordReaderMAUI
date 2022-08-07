@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PasswordReader.Pages.LoginPage"             
+             Title="Anmelden">
+    <ScrollView>
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="120,*" Margin="20" RowSpacing="20">
+            <Label Text="Benutzername:" VerticalOptions="Center"/>
+            <Entry Text="{Binding Username}" Grid.Column="1" 
+               IsEnabled="{Binding CanLogin}"/>
+            <Label Text="Kennwort:" Grid.Row="1" VerticalOptions="Center"/>
+            <Entry Text="{Binding Password}" IsPassword="True" Grid.Row="1" Grid.Column="1" 
+               IsEnabled="{Binding CanLogin}"/>
+            <Button Text="Anmelden" Clicked="Login_Clicked" Grid.Row="2" Grid.ColumnSpan="2" WidthRequest="100" 
+                IsEnabled="{Binding CanLogin}"/>
+            <Button Text="Anmelden mit Langzeit-Token" Clicked="LoginToken_Clicked" Grid.Row="3" Grid.ColumnSpan="2" WidthRequest="300"
+                IsVisible="{Binding HasLoginToken}"
+                IsEnabled="{Binding CanLogin}"/>
+        </Grid>
+    </ScrollView>
+</ContentPage>

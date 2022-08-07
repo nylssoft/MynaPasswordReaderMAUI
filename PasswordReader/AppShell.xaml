@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="PasswordReader.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:PasswordReader"
+    xmlns:page="clr-namespace:PasswordReader.Pages">
+    
+    <ShellContent
+        Title="Anmelden"
+        ContentTemplate="{DataTemplate page:LoginPage}"
+        Route="login"/>
+
+    <ShellContent
+        Title="Sicherheitscode"
+        ContentTemplate="{DataTemplate page:Login2FAPage}"
+        Route="login2fa"/>
+    
+    <ShellContent
+        Title="Schlüssel"
+        ContentTemplate="{DataTemplate page:EncryptionKeyPage}"
+        Route="encryptionkey"/>
+
+    <ShellContent
+        Title="Kennwörter"
+        ContentTemplate="{DataTemplate page:PasswordListPage}"
+        Route="passwordlist"/>
+
+    <ShellContent
+        Title="Abmelden"
+        ContentTemplate="{DataTemplate page:LogoutPage}"
+        Route="logout"/>
+    
+    <ShellContent
+        Title="Über"
+        ContentTemplate="{DataTemplate page:AboutPage}"
+        Route="about" />
+
+</Shell>
