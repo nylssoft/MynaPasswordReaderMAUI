@@ -87,4 +87,15 @@ public partial class LoginPage : ContentPage
         await Shell.Current.GoToAsync(page);
     }
 
+    private void Username_Completed(object sender, EventArgs e)
+    {
+        entryPassword.Focus();
+    }
+
+    private void Password_Completed(object sender, EventArgs e)
+    {
+        entryPassword.Unfocus();
+        Login_Clicked(sender, e);
+    }
+
 }

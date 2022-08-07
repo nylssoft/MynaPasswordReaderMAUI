@@ -6,9 +6,9 @@
     <ScrollView>
         <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="120,*" Margin="20" RowSpacing="20">
             <Label Text="Benutzername:" VerticalOptions="Center"/>
-            <Entry Text="{Binding Username}" Grid.Column="1" IsSpellCheckEnabled="False" IsEnabled="{Binding CanLogin}"/>
+            <Entry Text="{Binding Username}" Grid.Column="1" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" IsEnabled="{Binding CanLogin}" Completed="Username_Completed"/>
             <Label Text="Kennwort:" Grid.Row="1" VerticalOptions="Center"/>
-            <Entry Text="{Binding Password}" IsPassword="True" Grid.Row="1" Grid.Column="1" IsSpellCheckEnabled="False" IsEnabled="{Binding CanLogin}"/>
+            <Entry x:Name="entryPassword" Text="{Binding Password}" IsPassword="True" Grid.Row="1" Grid.Column="1" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" IsEnabled="{Binding CanLogin}" Completed="Password_Completed"/>
             <Button Text="Anmelden" Clicked="Login_Clicked" Grid.Row="2" Grid.ColumnSpan="2" WidthRequest="100" IsEnabled="{Binding CanLogin}"/>
             <Button Text="Anmelden mit Langzeit-Token" Clicked="LoginToken_Clicked" Grid.Row="3" Grid.ColumnSpan="2" WidthRequest="300" IsVisible="{Binding HasLoginToken}" IsEnabled="{Binding CanLogin}"/>
         </Grid>

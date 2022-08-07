@@ -42,4 +42,10 @@ public partial class EncryptionKeyPage : ContentPage
             await DisplayAlert("Fehler", ex.Message, "OK");
         }
     }
+
+    private void EncryptionKey_Completed(object sender, EventArgs e)
+    {
+        entryEncryptionKey.Unfocus();
+        Save_Clicked(sender, e);
+    }
 }

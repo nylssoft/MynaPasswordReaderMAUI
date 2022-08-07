@@ -68,4 +68,10 @@ public partial class Login2FAPage : ContentPage
         }
         await Shell.Current.GoToAsync(page);
     }
+
+    private void SecurityCode_Completed(object sender, EventArgs e)
+    {
+        entrySecurityCode.Unfocus();
+        Confirm_Clicked(sender, e);
+    }
 }
