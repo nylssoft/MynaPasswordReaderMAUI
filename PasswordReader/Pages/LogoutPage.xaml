@@ -3,10 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PasswordReader.Pages.LogoutPage"
              Title="Abmelden">
-    <VerticalStackLayout Margin="20">
-        <Label 
-            Text="Du bist jetzt abgemeldet!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+    <ScrollView>
+        <VerticalStackLayout Margin="20" Spacing="20">
+            <Label Text="Du bist jetzt abgemeldet!" VerticalOptions="Center" HorizontalOptions="Center"/>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

@@ -60,6 +60,8 @@ public partial class LoginPage : ContentPage
 
     private async Task UpdateModel()
     {
+        _model.Username = App.ContextService.GetUsername();
+        _model.UserPhotoUrl = App.ContextService.GetUserPhotoUrl();
         _model.Password = "";
         _model.SecurityCode = "";
         _model.EncryptionKey = await App.ContextService.GetEncryptionKeyAsync();

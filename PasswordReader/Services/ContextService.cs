@@ -218,6 +218,24 @@ namespace PasswordReader.Services
             return Encoding.UTF8.GetString(Decrypt(HexStringToByteArray(password), encryptionKey, _userModel.passwordManagerSalt));
         }
 
+        public string GetUsername()
+        {
+            if (_loggedIn)
+            {
+                return _userModel.name;
+            }
+            return "";
+        }
+
+        public string GetUserPhotoUrl()
+        {
+            if (_loggedIn && !string.IsNullOrEmpty(_userModel.photo))
+            {
+                return $"https://www.stockfleth.eu/{_userModel.photo}";
+            }
+            return "https://www.stockfleth.eu/images/skat/profiles/default1.png";
+        }
+
         // helpers
 
         private static List<PasswordItem> DecryptPasswordItems(string encrypted, string cryptKey, string salt)

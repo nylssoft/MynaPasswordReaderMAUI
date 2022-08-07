@@ -35,7 +35,8 @@ public partial class LogoutPage : ContentPage
         try
         {
 			App.ContextService.Logout();
-            _model.Username = "";
+            _model.Username = App.ContextService.GetUsername();
+            _model.UserPhotoUrl = App.ContextService.GetUserPhotoUrl();
             _model.Password = "";
             _model.SecurityCode = "";
             _model.EncryptionKey = await App.ContextService.GetEncryptionKeyAsync();

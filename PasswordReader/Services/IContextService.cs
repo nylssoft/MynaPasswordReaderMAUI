@@ -46,5 +46,9 @@ namespace PasswordReader.Services
         Task<string> GetEncryptionKeyAsync();
 
         Task SetEncryptionKeyAsync(string encryptionKey);
+
+        string GetUsername();
+
+        string GetUserPhotoUrl();
     }
 }

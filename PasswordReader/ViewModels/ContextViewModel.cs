@@ -152,6 +152,18 @@ namespace PasswordReader.ViewModels
             }
         }
 
+        private string _userPhotoUrl;
+        public string UserPhotoUrl
+        {
+            get => _userPhotoUrl;
+            set
+            {
+                if (_userPhotoUrl == value) return;
+                _userPhotoUrl = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UserPhotoUrl)));
+            }
+        }
+
         public bool CanLogin => !_isLoggedIn && !_requires2FA;
 
         public bool CanConfirmSecurityCode => _requires2FA;

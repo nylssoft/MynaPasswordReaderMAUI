@@ -3,10 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PasswordReader.Pages.AboutPage"
              Title="Über">
-    <VerticalStackLayout Margin="20">
-        <Label 
-            Text="Copyright 2022 Niels Stockfleth"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+    <ScrollView>
+        <VerticalStackLayout Margin="20" Spacing="20">
+            <Label  Text="Myna Password Reader MAUI" VerticalOptions="Center" HorizontalOptions="Center" FontSize="Large"/>
+            <Label  Text="Copyright 2022 Niels Stockfleth" VerticalOptions="Center" HorizontalOptions="Center" FontSize="Medium"/>
+            <Image Source="{Binding UserPhotoUrl}" WidthRequest="64" HeightRequest="64" HorizontalOptions="Center"/>
+            <Label Text="{Binding Username}" HorizontalOptions="Center"/>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
