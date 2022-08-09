@@ -23,6 +23,8 @@ public partial class EncryptionKeyPage : ContentPage
 {
     private ContextViewModel _model;
 
+    private const string HIDDEN = "*********";
+
     public EncryptionKeyPage()
 	{
 		InitializeComponent();
@@ -30,10 +32,35 @@ public partial class EncryptionKeyPage : ContentPage
         BindingContext = _model;
 	}
 
+    protected async override void OnAppearing()
+    {
+        base.OnAppearing();
+        if (await App.ContextService.HasEncryptionKeyAsync())
+        {
+            _model.EncryptionKey = HIDDEN;
+        }
+    }
+
+    private async void ShowEncryptionKey_Clicked(object sender, EventArgs e)
+    {
+        if (_model.EncryptionKey == HIDDEN)
+        {
+            _model.EncryptionKey = await App.ContextService.GetEncryptionKeyAsync();
+        }
+        else if (await App.ContextService.HasEncryptionKeyAsync())
+        {
+            _model.EncryptionKey = HIDDEN;
+        }
+    }
+
     private async void Save_Clicked(object sender, EventArgs e)
     {
         try
         {
+            if (_model.EncryptionKey == HIDDEN)
+            {
+                _model.EncryptionKey = await App.ContextService.GetEncryptionKeyAsync();
+            }
             await App.ContextService.SetEncryptionKeyAsync(_model.EncryptionKey);
             await Shell.Current.GoToAsync("//passwordlist");
         }
