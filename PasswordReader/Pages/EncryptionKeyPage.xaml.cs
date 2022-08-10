@@ -46,10 +46,12 @@ public partial class EncryptionKeyPage : ContentPage
         if (_model.EncryptionKey == HIDDEN)
         {
             _model.EncryptionKey = await App.ContextService.GetEncryptionKeyAsync();
+            showEncryptionKeyButton.Source = Application.Current.RequestedTheme == AppTheme.Light ? "eyeslash.png" : "eyeslashdark.png";
         }
         else if (await App.ContextService.HasEncryptionKeyAsync())
         {
             _model.EncryptionKey = HIDDEN;
+            showEncryptionKeyButton.Source = Application.Current.RequestedTheme == AppTheme.Light ? "eye.png" : "eyedark.png";
         }
     }
 

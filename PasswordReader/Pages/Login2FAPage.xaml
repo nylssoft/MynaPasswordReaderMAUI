@@ -4,9 +4,11 @@
              x:Class="PasswordReader.Pages.Login2FAPage"
              Title="Sicherheitscode">
     <ScrollView>
-        <VerticalStackLayout Margin="20" Spacing="20">
+        <VerticalStackLayout Margin="20" Spacing="5">
             <Label Text="Sicherheitscode:"/>
-            <Entry Text="{Binding SecurityCode}" IsEnabled="{Binding CanConfirmSecurityCode}" Keyboard="Numeric" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" Completed="SecurityCode_Completed"/>
+            <Border Padding="10,0,10,0" HeightRequest="40">
+                <Entry Text="{Binding SecurityCode}" IsEnabled="{Binding CanConfirmSecurityCode}" Keyboard="Numeric" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" Completed="SecurityCode_Completed"/>
+            </Border>
             <Button Text="Bestätigen" Clicked="Confirm_Clicked" WidthRequest="100" IsEnabled="{Binding CanConfirmSecurityCode}"/>
         </VerticalStackLayout>
     </ScrollView>

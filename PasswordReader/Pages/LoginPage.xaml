@@ -4,11 +4,15 @@
              x:Class="PasswordReader.Pages.LoginPage"             
              Title="Anmelden">
     <ScrollView>
-        <VerticalStackLayout Margin="20" Spacing="20">
+        <VerticalStackLayout Margin="20" Spacing="5">
             <Label Text="Benutzername:"/>
-            <Entry Text="{Binding Username}" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" IsEnabled="{Binding CanLogin}" Completed="Username_Completed"/>
+            <Border Padding="10,0,10,0" HeightRequest="40">
+                <Entry Text="{Binding Username}" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" IsEnabled="{Binding CanLogin}" Completed="Username_Completed"/>
+            </Border>
             <Label Text="Kennwort:"/>
-            <Entry x:Name="entryPassword" Text="{Binding Password}" IsPassword="True" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" IsEnabled="{Binding CanLogin}" Completed="Password_Completed"/>
+            <Border Padding="10,0,10,0" HeightRequest="40">
+                <Entry x:Name="entryPassword" Text="{Binding Password}" IsPassword="True" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" IsEnabled="{Binding CanLogin}" Completed="Password_Completed"/>
+            </Border>
             <Button Text="Anmelden" Clicked="Login_Clicked" WidthRequest="100" IsEnabled="{Binding CanLogin}"/>
             <Button Text="Anmelden mit Langzeit-Token" Clicked="LoginToken_Clicked" WidthRequest="300" IsVisible="{Binding HasLoginToken}" IsEnabled="{Binding CanLogin}"/>
         </VerticalStackLayout>
