@@ -31,15 +31,25 @@ public partial class PasswordListPage : ContentPage
         BindingContext = _model;
     }
 
-    private async void Decode_Clicked(object sender, EventArgs e)
-	{
+    protected async override void OnAppearing()
+    {
+        base.OnAppearing();
+        if (_model.CanDecodePasswordItems && _model.PasswordItems == null)
+        {
+            await Decode();
+        }
+    }
+
+    private async Task Decode()
+    {
         try
         {
-            _model.PasswordItems = new ObservableCollection<PasswordItemViewModel>();
             var passwordItems = await App.ContextService.DecodePasswordItemsAsync();
+            _model.PasswordItems = new ObservableCollection<PasswordItemViewModel>();
             foreach (var pwdItem in passwordItems)
             {
-                _model.PasswordItems.Add(new PasswordItemViewModel {
+                _model.PasswordItems.Add(new PasswordItemViewModel
+                {
                     Name = pwdItem.Name,
                     ImageUrl = pwdItem.ImageUrl,
                     Url = pwdItem.Url,
@@ -74,15 +84,5 @@ public partial class PasswordListPage : ContentPage
         {
             await DisplayAlert("Fehler", ex.Message, "OK");
         }
-    }
-
-    private void ListView_ItemSelected_1(object sender, SelectedItemChangedEventArgs e)
-    {
-
-    }
-
-    private void ListView_ItemSelected_2(object sender, SelectedItemChangedEventArgs e)
-    {
-
     }
 }

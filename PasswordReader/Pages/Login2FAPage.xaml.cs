@@ -70,11 +70,4 @@ public partial class Login2FAPage : ContentPage
         }
         await Shell.Current.GoToAsync(page);
     }
-
-    private void SecurityCode_Completed(object sender, EventArgs e)
-    {
-        // does not work, keyboard remains open
-        // https://github.com/dotnet/maui/pull/7635
-        // Confirm_Clicked(sender, e);
-    }
 }

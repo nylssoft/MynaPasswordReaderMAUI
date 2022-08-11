@@ -57,6 +57,11 @@ public partial class EncryptionKeyPage : ContentPage
 
     private async void Save_Clicked(object sender, EventArgs e)
     {
+        await Save();
+    }
+
+    private async Task Save()
+    {
         try
         {
             if (_model.EncryptionKey == HIDDEN)
@@ -64,6 +69,7 @@ public partial class EncryptionKeyPage : ContentPage
                 _model.EncryptionKey = await App.ContextService.GetEncryptionKeyAsync();
             }
             await App.ContextService.SetEncryptionKeyAsync(_model.EncryptionKey);
+            _model.PasswordItems = null; // force reload
             await Shell.Current.GoToAsync("//passwordlist");
         }
         catch (Exception ex)
@@ -72,10 +78,4 @@ public partial class EncryptionKeyPage : ContentPage
         }
     }
 
-    private void EncryptionKey_Completed(object sender, EventArgs e)
-    {
-        // does not work, keyboard remains open
-        // https://github.com/dotnet/maui/pull/7635
-        // Save_Clicked(sender, e);
-    }
 }

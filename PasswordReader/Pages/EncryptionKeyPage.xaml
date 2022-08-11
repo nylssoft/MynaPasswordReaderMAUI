@@ -4,15 +4,17 @@
              x:Class="PasswordReader.Pages.EncryptionKeyPage"
              Title="Schlüssel">
     <ScrollView>
-        <VerticalStackLayout Margin="20" Spacing="5">
-            <Label Text="Schlüssel:" VerticalOptions="Center"/>
-            <Grid RowDefinitions="40" ColumnDefinitions="*,40" ColumnSpacing="10">
-                <Border Padding="10,0,10,0">
-                    <Entry Text="{Binding EncryptionKey}" IsEnabled="{Binding CanChangeEncryptionKey}" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" Completed="EncryptionKey_Completed"/>
-                </Border>
-                <ImageButton Grid.Column="1" x:Name="showEncryptionKeyButton" Source="{AppThemeBinding Light=eye.png, Dark=eyedark.png}" IsEnabled="{Binding CanChangeEncryptionKey}" Clicked="ShowEncryptionKey_Clicked"/>
-            </Grid>
-            <Button Text="Speichern" Clicked="Save_Clicked" WidthRequest="100" IsEnabled="{Binding CanChangeEncryptionKey}"/>
+        <VerticalStackLayout Margin="20" Spacing="20">
+            <VerticalStackLayout>
+                <Label Text="Schlüssel:" VerticalOptions="Center"/>
+                <Grid RowDefinitions="40" ColumnDefinitions="*,40" ColumnSpacing="10">
+                    <Border Padding="10,0,10,0">
+                        <Entry Text="{Binding EncryptionKey}" IsEnabled="{Binding CanChangeEncryptionKey}" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False"/>
+                    </Border>
+                    <ImageButton Grid.Column="1" x:Name="showEncryptionKeyButton" Source="{AppThemeBinding Light=eye.png, Dark=eyedark.png}" IsEnabled="{Binding CanChangeEncryptionKey}" Clicked="ShowEncryptionKey_Clicked"/>
+                </Grid>
+            </VerticalStackLayout>
+            <Button x:Name="saveButton" Text="Speichern" Clicked="Save_Clicked" WidthRequest="100" IsEnabled="{Binding CanChangeEncryptionKey}"/>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

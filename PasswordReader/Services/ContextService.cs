@@ -278,7 +278,7 @@ namespace PasswordReader.Services
                 }
                 catch
                 {
-                    throw new ArgumentException("Der Schlüssel ist ungültig");
+                    throw new ArgumentException("Der Schlüssel ist ungültig.");
                 }
             }
 #pragma warning restore CA1416 // Validate platform compatibility
