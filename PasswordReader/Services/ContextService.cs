@@ -37,8 +37,6 @@ namespace PasswordReader.Services
 
         private string _token;
 
-        private readonly ClientInfo _clientInfo = new() { Name = "MAUI Password", UUID = "969B87CC-9E1B-4E1F-96C6-02720DFC580E" };
-
         private async Task InitAsync()
         {
             if (!_restClientInit)
@@ -51,8 +49,19 @@ namespace PasswordReader.Services
         public async Task LoginAsync(string username, string password)
         {
             if (_loggedIn || _requires2FA) throw new ArgumentException("Du bist noch angemeldet.");
+            ClientInfo clientInfo;
+            var clinfo = await SecureStorage.Default.GetAsync("clientinfo");
+            if (clinfo == null)
+            {
+                clientInfo = new ClientInfo { Name = "Myna Password Reader MAUI", UUID = Guid.NewGuid().ToString() };
+                await SecureStorage.SetAsync("clientinfo", JsonSerializer.Serialize(clientInfo));
+            }
+            else
+            {
+                clientInfo = JsonSerializer.Deserialize<ClientInfo>(clinfo);
+            }
             await InitAsync();
-            var authResult = await RestClient.Authenticate(username, password, _clientInfo, "de");
+            var authResult = await RestClient.Authenticate(username, password, clientInfo, "de");
             _token = authResult.token;
             _loginToken = authResult.longLivedToken;
             _requires2FA = authResult.requiresPass2;
