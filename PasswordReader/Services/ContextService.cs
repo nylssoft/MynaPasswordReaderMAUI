@@ -227,6 +227,33 @@ namespace PasswordReader.Services
             return Encoding.UTF8.GetString(Decrypt(HexStringToByteArray(password), encryptionKey, _userModel.passwordManagerSalt));
         }
 
+        public async Task<List<Note>> DecodeNoteTitlesAsync()
+        {
+            List<Note> ret = new();
+            if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
+            var encryptionKey = await GetEncryptionKeyAsync();
+            if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
+            var notes = await RestClient.GetNotes(_token);
+            foreach (var note in notes)
+            {
+                var title = DecodeText(note.title, encryptionKey, _userModel.passwordManagerSalt);
+                note.title = title;
+                ret.Add(note);
+            }
+            return ret;
+        }
+
+        public async Task<Note> DecodeNoteAsync(long id)
+        {
+            if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
+            var encryptionKey = await GetEncryptionKeyAsync();
+            if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
+            var note = await RestClient.GetNote(_token, id);
+            note.title = DecodeText(note.title, encryptionKey, _userModel.passwordManagerSalt);
+            note.content = DecodeText(note.content, encryptionKey, _userModel.passwordManagerSalt);
+            return note;
+        }
+
         public string GetUsername()
         {
             if (_loggedIn)
@@ -246,6 +273,12 @@ namespace PasswordReader.Services
         }
 
         // helpers
+
+        private static string DecodeText(string encrypted, string cryptKey, string salt)
+        {
+            var decoded = Decrypt(HexStringToByteArray(encrypted), cryptKey, salt);
+            return Encoding.UTF8.GetString(decoded);
+        }
 
         private static List<PasswordItem> DecryptPasswordItems(string encrypted, string cryptKey, string salt)
         {

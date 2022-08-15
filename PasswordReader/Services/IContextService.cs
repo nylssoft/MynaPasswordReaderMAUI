@@ -29,6 +29,10 @@ namespace PasswordReader.Services
 
         Task<string> DecodePasswordAsync(string password);
 
+        Task<List<Note>> DecodeNoteTitlesAsync();
+
+        Task<Note> DecodeNoteAsync(long noteId);
+
         void Logout();
 
         bool IsLoggedIn();

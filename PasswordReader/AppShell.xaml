@@ -27,6 +27,11 @@
         Route="passwordlist"/>
 
     <ShellContent
+        Title="Notizen"
+        ContentTemplate="{DataTemplate page:NoteListPage}"
+        Route="notelist"/>
+
+    <ShellContent
         Title="Abmelden"
         ContentTemplate="{DataTemplate page:LogoutPage}"
         Route="logout"/>

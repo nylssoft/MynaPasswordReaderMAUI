@@ -46,6 +46,8 @@ public partial class LogoutPage : ContentPage
             _model.HasPasswordItems = App.ContextService.HasPasswordItems();
             _model.PasswordItems = null;
             _model.SelectedPasswordItem = null;
+            _model.NoteItems = null;
+            _model.SelectedNoteItem = null;
         }
         catch (Exception ex)
 		{

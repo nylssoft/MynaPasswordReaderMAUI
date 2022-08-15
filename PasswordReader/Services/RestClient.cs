@@ -114,6 +114,20 @@ namespace PasswordReader.Services
             return await httpClient.GetFromJsonAsync<string>("api/pwdman/file");
         }
 
+        public static async Task<List<Note>> GetNotes(string token)
+        {
+            httpClient.DefaultRequestHeaders.Remove("token");
+            httpClient.DefaultRequestHeaders.Add("token", token);
+            return await httpClient.GetFromJsonAsync<List<Note>>("api/notes/note");
+        }
+
+        public static async Task<Note> GetNote(string token, long id)
+        {
+            httpClient.DefaultRequestHeaders.Remove("token");
+            httpClient.DefaultRequestHeaders.Add("token", token);
+            return await httpClient.GetFromJsonAsync<Note>($"api/notes/note/{id}");
+        }
+
         private static async Task EnsureSuccess(HttpResponseMessage response)
         {
             if (response.StatusCode != System.Net.HttpStatusCode.OK)

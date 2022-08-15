@@ -164,6 +164,30 @@ namespace PasswordReader.ViewModels
             }
         }
 
+        private ObservableCollection<NoteItemViewModel> _noteItems;
+        public ObservableCollection<NoteItemViewModel> NoteItems
+        {
+            get => _noteItems;
+            set
+            {
+                if (_noteItems == value) return;
+                _noteItems = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NoteItems)));
+            }
+        }
+
+        private NoteItemViewModel _selectedNoteItem;
+        public NoteItemViewModel SelectedNoteItem
+        {
+            get => _selectedNoteItem;
+            set
+            {
+                if (_selectedNoteItem == value) return;
+                _selectedNoteItem = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedNoteItem)));
+            }
+        }
+
         public bool CanLogin => !_isLoggedIn && !_requires2FA;
 
         public bool CanConfirmSecurityCode => _requires2FA;
