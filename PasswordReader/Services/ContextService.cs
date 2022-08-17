@@ -129,8 +129,16 @@ namespace PasswordReader.Services
             }
         }
 
-        public void Logout()
+        public async Task Logout()
         {
+            try
+            {
+                await RestClient.Logout(_token);
+            }
+            catch
+            {
+                // ignored
+            }
             _loggedIn = false;
             _requires2FA = false;
             _token = null;

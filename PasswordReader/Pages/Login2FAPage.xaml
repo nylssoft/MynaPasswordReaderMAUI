@@ -12,6 +12,7 @@
                 </Border>
             </VerticalStackLayout>
             <Button Text="Bestätigen" Clicked="Confirm_Clicked" WidthRequest="100" IsEnabled="{Binding CanConfirmSecurityCode}"/>
+            <ActivityIndicator IsRunning="{Binding IsRunning}"/>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

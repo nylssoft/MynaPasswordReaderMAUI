@@ -19,6 +19,7 @@
             </VerticalStackLayout>
             <Button Text="Anmelden" Clicked="Login_Clicked" WidthRequest="100" IsEnabled="{Binding CanLogin}"/>
             <Button Text="Anmelden mit Langzeit-Token" Clicked="LoginToken_Clicked" WidthRequest="300" IsVisible="{Binding HasLoginToken}" IsEnabled="{Binding CanLogin}"/>
+            <ActivityIndicator IsRunning="{Binding IsRunning}"/>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

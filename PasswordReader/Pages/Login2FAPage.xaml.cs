@@ -34,6 +34,7 @@ public partial class Login2FAPage : ContentPage
     {
         try
         {
+            _model.IsRunning = true;
             await App.ContextService.Login2FAAsync(_model.SecurityCode);
             await UpdateModel();
             await GotoNextPage();
@@ -41,6 +42,10 @@ public partial class Login2FAPage : ContentPage
         catch (Exception ex)
         {
             await DisplayAlert("Fehler", ex.Message, "OK");
+        }
+        finally
+        {
+            _model.IsRunning = false;
         }
     }
 

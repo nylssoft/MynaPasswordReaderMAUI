@@ -188,14 +188,30 @@ namespace PasswordReader.ViewModels
             }
         }
 
-        public bool CanLogin => !_isLoggedIn && !_requires2FA;
+        public bool CanLogin => !_isLoggedIn && !_requires2FA && !_isRunning;
 
-        public bool CanConfirmSecurityCode => _requires2FA;
+        public bool CanConfirmSecurityCode => _requires2FA && !_isRunning;
 
         public bool CanChangeEncryptionKey => _isLoggedIn;
 
         public bool CanLogout => _isLoggedIn || _requires2FA;
 
         public bool CanDecodePasswordItems => _isLoggedIn && _hasPasswordItems;
+
+        private bool _isRunning;
+        public bool IsRunning
+        {
+            get => _isRunning;
+            set
+            {
+                if (_isRunning == value) return;
+                _isRunning = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsRunning)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLogin)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLogout)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanConfirmSecurityCode)));
+            }
+        }
+
     }
 }

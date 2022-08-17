@@ -33,7 +33,7 @@ namespace PasswordReader.Services
 
         Task<Note> DecodeNoteAsync(long noteId);
 
-        void Logout();
+        Task Logout();
 
         bool IsLoggedIn();
         

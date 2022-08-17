@@ -29,12 +29,12 @@ public partial class LogoutPage : ContentPage
         _model = App.ContextViewModel;
     }
 
-    protected async override void OnAppearing()
-	{
-        base.OnAppearing();
+    private async void Logout_Clicked(object sender, EventArgs e)
+    {
         try
         {
-			App.ContextService.Logout();
+            _model.IsRunning = true;
+            await App.ContextService.Logout();
             _model.Username = App.ContextService.GetUsername();
             _model.UserPhotoUrl = App.ContextService.GetUserPhotoUrl();
             _model.Password = "";
@@ -48,10 +48,15 @@ public partial class LogoutPage : ContentPage
             _model.SelectedPasswordItem = null;
             _model.NoteItems = null;
             _model.SelectedNoteItem = null;
+            await Shell.Current.GoToAsync("//login");
         }
         catch (Exception ex)
-		{
+        {
             await DisplayAlert("Fehler", ex.Message, "OK");
         }
-	}
+        finally
+        {
+            _model.IsRunning = false;
+        }
+    }
 }

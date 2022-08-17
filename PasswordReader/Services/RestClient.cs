@@ -107,6 +107,13 @@ namespace PasswordReader.Services
             return await response.Content.ReadFromJsonAsync<AuthenticationResult>();
         }
 
+        public static async Task<bool> Logout(string token)
+        {
+            httpClient.DefaultRequestHeaders.Remove("token");
+            httpClient.DefaultRequestHeaders.Add("token", token);
+            return await httpClient.GetFromJsonAsync<bool>("api/pwdman/logout");
+        }
+
         public static async Task<string> GetPasswordFile(string token)
         {
             httpClient.DefaultRequestHeaders.Remove("token");

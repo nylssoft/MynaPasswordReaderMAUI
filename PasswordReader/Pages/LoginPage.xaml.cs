@@ -34,13 +34,19 @@ public partial class LoginPage : ContentPage
     {
         try
         {
+            _model.IsRunning = true;
             await App.ContextService.LoginWithTokenAsync();
             await UpdateModel();
             await GotoNextPage();
         }
         catch (Exception ex)
         {
+            _model.HasLoginToken = await App.ContextService.HasLoginTokenAsync();
             await DisplayAlert("Fehler", ex.Message, "OK");
+        }
+        finally
+        {
+            _model.IsRunning = false;
         }
     }
 
@@ -48,14 +54,19 @@ public partial class LoginPage : ContentPage
 	{
 		try
 		{
+            _model.IsRunning = true;
             await App.ContextService.LoginAsync(_model.Username, _model.Password);
             await UpdateModel();
             await GotoNextPage();
         }
         catch (Exception ex)
 		{
-			await DisplayAlert("Fehler", ex.Message, "OK");
+            await DisplayAlert("Fehler", ex.Message, "OK");
 		}
+        finally
+        {
+            _model.IsRunning = false;
+        }
     }
 
     private async Task UpdateModel()
