@@ -64,23 +64,23 @@ public partial class NoteItemPage : ContentPage
 
     private async void Back_Clicked(object sender, EventArgs e)
     {
-        bool goBack = true;
         if (_model.Changed)
         {
-            goBack = await DisplayAlert("Zurück", "Die Notiz wurde nicht gespeichert. Willst Du die Seite wirklich verlassen?", "Ja", "Nein");
+            if (!await DisplayAlert("Zurück", "Die Notiz wurde nicht gespeichert. Willst Du die Seite wirklich verlassen?", "Ja", "Nein"))
+            {
+                return;
+            }
+            _model.Changed = false;
+            App.ContextService.NoteChanged = false;
         }
-        if (goBack)
-        {
-            await Shell.Current.GoToAsync("..");
-        }
+        await Shell.Current.GoToAsync("..");
     }
 
     private async void DeleteNote_Clicked(object sender, EventArgs e)
     {
         try
         {
-            bool answer = await DisplayAlert("Notiz löschen", "Willst Du die Notiz wirklich löschen?", "Ja", "Nein");
-            if (answer)
+            if (await DisplayAlert("Notiz löschen", "Willst Du die Notiz wirklich löschen?", "Ja", "Nein"))
             {
                 await App.ContextService.DeleteNoteAsync(_model.Id);
                 await Shell.Current.GoToAsync("..");
