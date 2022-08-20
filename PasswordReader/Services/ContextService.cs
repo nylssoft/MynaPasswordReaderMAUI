@@ -15,6 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -317,13 +318,31 @@ namespace PasswordReader.Services
             return "";
         }
 
+        public string GetEmailAddress()
+        {
+            if  (_loggedIn)
+            {
+                return _userModel.email;
+            }
+            return "";
+        }
+
+        public string GetLastLogin()
+        {
+            if (_loggedIn && _userModel.lastLoginUtc.HasValue)
+            {
+                return _userModel.lastLoginUtc.Value.ToLocalTime().ToString("f", new CultureInfo("de-DE"));
+            }
+            return "";
+        }
+
         public string GetUserPhotoUrl()
         {
             if (_loggedIn && !string.IsNullOrEmpty(_userModel.photo))
             {
                 return $"https://www.stockfleth.eu/{_userModel.photo}";
             }
-            return "https://www.stockfleth.eu/images/skat/profiles/default1.png";
+            return "";
         }
 
         // helpers

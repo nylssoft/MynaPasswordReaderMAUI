@@ -61,6 +61,10 @@ namespace PasswordReader.Services
 
         string GetUserPhotoUrl();
 
+        string GetEmailAddress();
+
+        string GetLastLogin();
+
         bool NoteChanged { get; set; }
     }
 }

@@ -32,9 +32,9 @@
         Route="notelist"/>
 
     <ShellContent
-        Title="Abmelden"
-        ContentTemplate="{DataTemplate page:LogoutPage}"
-        Route="logout"/>
+        Title="Profil"
+        ContentTemplate="{DataTemplate page:ProfilePage}"
+        Route="profile"/>
     
     <ShellContent
         Title="Über"

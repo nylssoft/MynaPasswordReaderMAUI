@@ -19,11 +19,11 @@ using PasswordReader.ViewModels;
 
 namespace PasswordReader.Pages;
 
-public partial class LogoutPage : ContentPage
+public partial class ProfilePage : ContentPage
 {
     private ContextViewModel _model;
 
-    public LogoutPage()
+    public ProfilePage()
 	{
 		InitializeComponent();
         _model = App.ContextViewModel;
@@ -35,19 +35,7 @@ public partial class LogoutPage : ContentPage
         {
             _model.IsRunning = true;
             await App.ContextService.LogoutAsync();
-            _model.Username = App.ContextService.GetUsername();
-            _model.UserPhotoUrl = App.ContextService.GetUserPhotoUrl();
-            _model.Password = "";
-            _model.SecurityCode = "";
-            _model.EncryptionKey = await App.ContextService.GetEncryptionKeyAsync();
-            _model.IsLoggedIn = App.ContextService.IsLoggedIn();
-            _model.Requires2FA = App.ContextService.Requires2FA();
-            _model.HasLoginToken = await App.ContextService.HasLoginTokenAsync();
-            _model.HasPasswordItems = App.ContextService.HasPasswordItems();
-            _model.PasswordItems = null;
-            _model.SelectedPasswordItem = null;
-            _model.NoteItems = null;
-            _model.SelectedNoteItem = null;
+            await _model.InitAsync();
             await Shell.Current.GoToAsync("//login");
         }
         catch (Exception ex)

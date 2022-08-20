@@ -24,6 +24,26 @@ namespace PasswordReader.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
+
+        public async Task InitAsync()
+        {
+            Username = App.ContextService.GetUsername();
+            UserPhotoUrl = App.ContextService.GetUserPhotoUrl();
+            EmailAddress = App.ContextService.GetEmailAddress();
+            LastLogin = App.ContextService.GetLastLogin();
+            Password = "";
+            SecurityCode = "";
+            EncryptionKey = await App.ContextService.GetEncryptionKeyAsync();
+            IsLoggedIn = App.ContextService.IsLoggedIn();
+            Requires2FA = App.ContextService.Requires2FA();
+            HasLoginToken = await App.ContextService.HasLoginTokenAsync();
+            HasPasswordItems = App.ContextService.HasPasswordItems();
+            PasswordItems = null;
+            SelectedPasswordItem = null;
+            NoteItems = null;
+            SelectedNoteItem = null;
+        }
+
         private string _username;
         public string Username
         {
@@ -57,6 +77,7 @@ namespace PasswordReader.ViewModels
                 if (_encryptionKey == value) return;
                 _encryptionKey = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EncryptionKey)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreateNote)));
             }
         }
 
@@ -97,6 +118,7 @@ namespace PasswordReader.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLogout)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanChangeEncryptionKey)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanDecodePasswordItems)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreateNote)));
             }
         }
 
@@ -149,6 +171,30 @@ namespace PasswordReader.ViewModels
                 if (_selectedPasswordItem == value) return;
                 _selectedPasswordItem = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedPasswordItem)));
+            }
+        }
+
+        private string _emailAddress;
+        public string EmailAddress
+        {
+            get => _emailAddress;
+            set
+            {
+                if (_emailAddress == value) return;
+                _emailAddress = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EmailAddress)));
+            }
+        }
+
+        private string _lastLogin;
+        public string LastLogin
+        {
+            get => _lastLogin;
+            set
+            {
+                if (_lastLogin == value) return;
+                _lastLogin = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LastLogin)));
             }
         }
 

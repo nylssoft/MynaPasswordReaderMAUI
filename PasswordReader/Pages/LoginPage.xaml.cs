@@ -36,7 +36,7 @@ public partial class LoginPage : ContentPage
         {
             _model.IsRunning = true;
             await App.ContextService.LoginWithTokenAsync();
-            await UpdateModel();
+            await _model.InitAsync();
             await GotoNextPage();
         }
         catch (Exception ex)
@@ -56,7 +56,7 @@ public partial class LoginPage : ContentPage
 		{
             _model.IsRunning = true;
             await App.ContextService.LoginAsync(_model.Username, _model.Password);
-            await UpdateModel();
+            await _model.InitAsync();
             await GotoNextPage();
         }
         catch (Exception ex)
@@ -67,19 +67,6 @@ public partial class LoginPage : ContentPage
         {
             _model.IsRunning = false;
         }
-    }
-
-    private async Task UpdateModel()
-    {
-        _model.Username = App.ContextService.GetUsername();
-        _model.UserPhotoUrl = App.ContextService.GetUserPhotoUrl();
-        _model.Password = "";
-        _model.SecurityCode = "";
-        _model.EncryptionKey = await App.ContextService.GetEncryptionKeyAsync();
-        _model.IsLoggedIn = App.ContextService.IsLoggedIn();
-        _model.Requires2FA = App.ContextService.Requires2FA();
-        _model.HasLoginToken = await App.ContextService.HasLoginTokenAsync();
-        _model.HasPasswordItems = App.ContextService.HasPasswordItems();
     }
 
     private async Task GotoNextPage()
