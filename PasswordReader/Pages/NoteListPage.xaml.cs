@@ -77,6 +77,11 @@ public partial class NoteListPage : ContentPage
                 _model.SelectedNoteItem.Title = note.title;
                 _model.SelectedNoteItem.Content = note.content;
                 _model.SelectedNoteItem.LastModified = note.lastModifiedUtc.Value.ToLocalTime().ToString("f", new CultureInfo("de-DE"));
+                var navigationParameter = new Dictionary<string, object>()
+                {
+                    { "item", _model.SelectedNoteItem }
+                };
+                await Shell.Current.GoToAsync("noteitem", navigationParameter);
             }
             catch (Exception ex)
             {

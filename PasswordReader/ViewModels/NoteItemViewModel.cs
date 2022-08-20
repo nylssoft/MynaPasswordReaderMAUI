@@ -57,12 +57,9 @@ namespace PasswordReader.ViewModels
             {
                 if (_content == value) return;
                 _content = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasContent)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Content)));
             }
         }
-
-        public bool HasContent { get => !string.IsNullOrEmpty(Content); }
 
         private string _lastModified;
         public string LastModified

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PasswordReader.Pages.NoteItemPage"
+             Title="Notiz">
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="20" RowSpacing="10">
+        <VerticalStackLayout>
+            <Label Text="Titel:" VerticalOptions="Center"/>
+            <Border Padding="10,0,10,0" HeightRequest="40">
+                <Entry IsReadOnly="True" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" Text="{Binding Title}"/>
+            </Border>
+        </VerticalStackLayout>
+        <HorizontalStackLayout Grid.Row="1">
+            <Label Text="Notiz vom" Margin="0,0,5,0"/>
+            <Label Text="{Binding LastModified}"/>
+        </HorizontalStackLayout>
+        <Border Grid.Row="2" Padding="10,0,10,0">
+            <Editor IsReadOnly="True" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" Text="{Binding Content}"/>
+        </Border>
+        <Button Grid.Row="3" Text="Zurück" WidthRequest="100" HorizontalOptions="Center" Clicked="Back_Clicked"/>
+    </Grid>
+</ContentPage>

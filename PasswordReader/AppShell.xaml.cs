@@ -31,6 +31,7 @@ public partial class AppShell : Shell
         _model = App.ContextViewModel;
         BindingContext = _model;
         Routing.RegisterRoute("passworditem", typeof(PasswordItemPage));
+        Routing.RegisterRoute("noteitem", typeof(NoteItemPage));
     }
 
     protected override async void OnAppearing()
