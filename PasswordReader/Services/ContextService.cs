@@ -284,6 +284,10 @@ namespace PasswordReader.Services
 
         private static string DecodeText(string encrypted, string cryptKey, string salt)
         {
+            if (string.IsNullOrEmpty(encrypted))
+            {
+                return "";
+            }
             var decoded = Decrypt(HexStringToByteArray(encrypted), cryptKey, salt);
             return Encoding.UTF8.GetString(decoded);
         }
