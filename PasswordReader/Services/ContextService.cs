@@ -37,11 +37,17 @@ namespace PasswordReader.Services
 
         private string _token;
 
+        private bool _noteChanged = false;
+
+        private const string UNKNOWN = "???????";
+
+        public bool NoteChanged { get => _noteChanged; set => _noteChanged = value; }
+
         private async Task InitAsync()
         {
             if (!_restClientInit)
             {
-                await RestClient.Init("https://www.stockfleth.eu", "de");
+                await RestClient.InitAsync("https://www.stockfleth.eu", "de");
                 _restClientInit = true;
             }
         }
@@ -61,13 +67,13 @@ namespace PasswordReader.Services
                 clientInfo = JsonSerializer.Deserialize<ClientInfo>(clinfo);
             }
             await InitAsync();
-            var authResult = await RestClient.Authenticate(username, password, clientInfo, "de");
+            var authResult = await RestClient.AuthenticateAsync(username, password, clientInfo, "de");
             _token = authResult.token;
             _loginToken = authResult.longLivedToken;
             _requires2FA = authResult.requiresPass2;
             if (!_requires2FA)
             {
-                _userModel = await RestClient.GetUser(_token);
+                _userModel = await RestClient.GetUserAsync(_token);
                 _loggedIn = true;
             }
             if (string.IsNullOrEmpty(_loginToken))
@@ -86,7 +92,7 @@ namespace PasswordReader.Services
             if (_loggedIn) throw new ArgumentException("Du bist noch angemeldet.");
             if (!_requires2FA) throw new ArgumentException("2-Faktor-Anmeldung ist nicht aktiviert.");
             await InitAsync();
-            var authResult = await RestClient.AuthenticatePass2(_token, securityCode);
+            var authResult = await RestClient.AuthenticatePass2Async(_token, securityCode);
             _token = authResult.token;
             _loginToken = authResult.longLivedToken;
             if (string.IsNullOrEmpty(_loginToken))
@@ -98,7 +104,7 @@ namespace PasswordReader.Services
             {
                 await SecureStorage.Default.SetAsync("lltoken", _loginToken);
             }
-            _userModel = await RestClient.GetUser(_token);
+            _userModel = await RestClient.GetUserAsync(_token);
             _loggedIn = true;
             _requires2FA = false;
         }
@@ -110,9 +116,9 @@ namespace PasswordReader.Services
             await InitAsync();
             try
             {
-                var authResult = await RestClient.AuthenticateLLToken(_loginToken);
+                var authResult = await RestClient.AuthenticateLLTokenAsync(_loginToken);
                 _token = authResult.token;
-                _userModel = await RestClient.GetUser(_token);
+                _userModel = await RestClient.GetUserAsync(_token);
                 _loggedIn = true;
                 _requires2FA = false;
                 if (_loginToken != authResult.longLivedToken)
@@ -129,11 +135,11 @@ namespace PasswordReader.Services
             }
         }
 
-        public async Task Logout()
+        public async Task LogoutAsync()
         {
             try
             {
-                await RestClient.Logout(_token);
+                await RestClient.LogoutAsync(_token);
             }
             catch
             {
@@ -216,13 +222,13 @@ namespace PasswordReader.Services
             }
         }
 
-        public async Task<List<PasswordItem>> DecodePasswordItemsAsync()
+        public async Task<List<PasswordItem>> GetPasswordItemsAsync()
         {
             if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
             if (!_userModel.hasPasswordManagerFile) throw new ArgumentException("Es wurden keine Passwörter hochgeladen.");
             var encryptionKey = await GetEncryptionKeyAsync();
             if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
-            var encrypted = await RestClient.GetPasswordFile(_token);
+            var encrypted = await RestClient.GetPasswordFileAsync(_token);
             return DecryptPasswordItems(encrypted, encryptionKey, _userModel.passwordManagerSalt);
         }
 
@@ -232,34 +238,74 @@ namespace PasswordReader.Services
             if (!_userModel.hasPasswordManagerFile) throw new ArgumentException("Es wurden keine Passwörter hochgeladen.");
             var encryptionKey = await GetEncryptionKeyAsync();
             if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
-            return Encoding.UTF8.GetString(Decrypt(HexStringToByteArray(password), encryptionKey, _userModel.passwordManagerSalt));
+            return Encoding.UTF8.GetString(Decrypt(Convert.FromHexString(password), encryptionKey, _userModel.passwordManagerSalt));
         }
 
-        public async Task<List<Note>> DecodeNoteTitlesAsync()
+        public async Task<List<Note>> GetNotesAsync()
         {
             List<Note> ret = new();
             if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
             var encryptionKey = await GetEncryptionKeyAsync();
             if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
-            var notes = await RestClient.GetNotes(_token);
+            var notes = await RestClient.GetNotesAsync(_token);
             foreach (var note in notes)
             {
-                var title = DecodeText(note.title, encryptionKey, _userModel.passwordManagerSalt);
-                note.title = title;
+                try
+                {
+                    note.title = DecodeText(note.title, encryptionKey, _userModel.passwordManagerSalt);
+                }
+                catch
+                {
+                    note.title = UNKNOWN;
+                }
                 ret.Add(note);
             }
             return ret;
         }
 
-        public async Task<Note> DecodeNoteAsync(long id)
+        public async Task<Note> GetNoteAsync(long id)
         {
             if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
             var encryptionKey = await GetEncryptionKeyAsync();
             if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
-            var note = await RestClient.GetNote(_token, id);
-            note.title = DecodeText(note.title, encryptionKey, _userModel.passwordManagerSalt);
-            note.content = DecodeText(note.content, encryptionKey, _userModel.passwordManagerSalt);
+            var note = await RestClient.GetNoteAsync(_token, id);
+            try
+            {
+                note.title = DecodeText(note.title, encryptionKey, _userModel.passwordManagerSalt);
+                note.content = DecodeText(note.content, encryptionKey, _userModel.passwordManagerSalt);
+            }
+            catch
+            {
+                note.title = UNKNOWN;
+                note.content = "";
+            }
             return note;
+        }
+
+        public async Task<long> CreateNoteAsync()
+        {
+            if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
+            var encryptionKey = await GetEncryptionKeyAsync();
+            if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
+            string encryptedTitle = EncodeText("Neue Notiz", encryptionKey, _userModel.passwordManagerSalt);
+            var noteid = await RestClient.CreateNewNoteAsync(_token, encryptedTitle);
+            return noteid;
+        }
+
+        public async Task DeleteNoteAsync(long id)
+        {
+            if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
+            await RestClient.DeleteNoteAsync(_token, id);
+        }
+
+        public async Task<DateTime> UpdateNoteAsync(long id, string title, string content)
+        {
+            if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
+            var encryptionKey = await GetEncryptionKeyAsync();
+            if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
+            var encryptedTitle = EncodeText(title, encryptionKey, _userModel.passwordManagerSalt);
+            var encryptedContent = EncodeText(content, encryptionKey, _userModel.passwordManagerSalt);
+            return await RestClient.UpdateNoteAsync(_token, id, encryptedTitle, encryptedContent);
         }
 
         public string GetUsername()
@@ -288,27 +334,46 @@ namespace PasswordReader.Services
             {
                 return "";
             }
-            var decoded = Decrypt(HexStringToByteArray(encrypted), cryptKey, salt);
+            var decoded = Decrypt(Convert.FromHexString(encrypted), cryptKey, salt);
             return Encoding.UTF8.GetString(decoded);
+        }
+
+        private static string EncodeText(string text, string cryptKey, string salt)
+        {
+            return Convert.ToHexString(Encrypt(Encoding.UTF8.GetBytes(text), cryptKey, salt));
         }
 
         private static List<PasswordItem> DecryptPasswordItems(string encrypted, string cryptKey, string salt)
         {
-            var plainText = Decrypt(HexStringToByteArray(encrypted), cryptKey, salt);
+            var plainText = Decrypt(Convert.FromHexString(encrypted), cryptKey, salt);
             var pwdItems = JsonSerializer.Deserialize<List<PasswordItem>>(plainText);
             pwdItems.Sort((i1, i2) => i1.Name.CompareTo(i2.Name));
             return pwdItems;
         }
 
-        private static byte[] HexStringToByteArray(string hex)
+        private static byte[] Encrypt(byte[] data, string cryptKey, string salt)
         {
-            int NumberChars = hex.Length;
-            byte[] bytes = new byte[NumberChars / 2];
-            for (int i = 0; i < NumberChars; i += 2)
+            var iv = new byte[12];
+            using (var rng = RandomNumberGenerator.Create())
             {
-                bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+                rng.GetBytes(iv);
             }
-            return bytes;
+            var key = Rfc2898DeriveBytes.Pbkdf2(
+                cryptKey,
+                Encoding.UTF8.GetBytes(salt),
+                1000, HashAlgorithmName.SHA256,
+                256 / 8);
+            var encoded = new byte[data.Length];
+            var tag = new byte[16];
+            using (var cipher = new AesGcm(key))
+            {
+                cipher.Encrypt(iv, data, encoded, tag);
+            }
+            var ret = new byte[iv.Length + encoded.Length + tag.Length];
+            iv.CopyTo(ret, 0);
+            encoded.CopyTo(ret, iv.Length);
+            tag.CopyTo(ret, iv.Length + encoded.Length);
+            return ret;
         }
 
         private static byte[] Decrypt(byte[] data, string cryptKey, string salt)

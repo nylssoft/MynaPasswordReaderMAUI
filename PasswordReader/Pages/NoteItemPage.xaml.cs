@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using PasswordReader.ViewModels;
+using System.Globalization;
 
 namespace PasswordReader.Pages;
 
@@ -52,14 +53,66 @@ public partial class NoteItemPage : ContentPage
         {
             return;
         }
+        _model.IsUpdating = true;
         _model.Id = _item.Id;
         _model.Title = _item.Title;
         _model.LastModified = _item.LastModified;
         _model.Content = _item.Content;
+        _model.Changed = false;
+        _model.IsUpdating = false;
     }
 
     private async void Back_Clicked(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("..");
+        bool goBack = true;
+        if (_model.Changed)
+        {
+            goBack = await DisplayAlert("Zurück", "Die Notiz wurde nicht gespeichert. Willst Du die Seite wirklich verlassen?", "Ja", "Nein");
+        }
+        if (goBack)
+        {
+            await Shell.Current.GoToAsync("..");
+        }
+    }
+
+    private async void DeleteNote_Clicked(object sender, EventArgs e)
+    {
+        try
+        {
+            bool answer = await DisplayAlert("Notiz löschen", "Willst Du die Notiz wirklich löschen?", "Ja", "Nein");
+            if (answer)
+            {
+                await App.ContextService.DeleteNoteAsync(_model.Id);
+                await Shell.Current.GoToAsync("..");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Fehler", ex.Message, "OK");
+        }
+    }
+
+    private async void SaveNote_Clicked(object sender, EventArgs e)
+    {
+        try
+        {
+            var lastModifiedUtc = await App.ContextService.UpdateNoteAsync(_model.Id, _model.Title, _model.Content);
+            _model.LastModified = lastModifiedUtc.ToLocalTime().ToString("f", new CultureInfo("de-DE"));
+            _model.Changed = false;
+            App.ContextService.NoteChanged = false;
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Fehler", ex.Message, "OK");
+        }
+    }
+
+    private void Note_Changed(object sender, TextChangedEventArgs e)
+    {
+        if (!_model.IsUpdating)
+        {
+            _model.Changed = true;
+            App.ContextService.NoteChanged = true;
+        }
     }
 }

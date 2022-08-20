@@ -25,7 +25,7 @@ namespace PasswordReader.Services
 
         private static Dictionary<string, string> translateMap = null;
 
-        public static async Task Init(string cloudUrl, string locale)
+        public static async Task InitAsync(string cloudUrl, string locale)
         {
             if (httpClient == null || httpClient.BaseAddress != new Uri(cloudUrl))
             {
@@ -65,7 +65,7 @@ namespace PasswordReader.Services
             return symbol;
         }
 
-        public static async Task<AuthenticationResult> Authenticate(
+        public static async Task<AuthenticationResult> AuthenticateAsync(
             string username, string password, ClientInfo clientInfo, string locale)
         {
             var url = "api/pwdman/auth";
@@ -80,74 +80,108 @@ namespace PasswordReader.Services
                 ClientUUID = clientInfo?.UUID,
                 ClientName = clientInfo?.Name
             });
-            await EnsureSuccess(response);
+            await EnsureSuccessAsync(response);
             return await response.Content.ReadFromJsonAsync<AuthenticationResult>();
         }
 
-        public static async Task<UserModel> GetUser(string token)
+        public static async Task<UserModel> GetUserAsync(string token)
         {
             httpClient.DefaultRequestHeaders.Remove("token");
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.GetAsync("api/pwdman/user");
-            await EnsureSuccess(response);
+            await EnsureSuccessAsync(response);
             return await response.Content.ReadFromJsonAsync<UserModel>();
         }
 
-        public static async Task<AuthenticationResult> AuthenticateLLToken(string lltoken)
+        public static async Task<AuthenticationResult> AuthenticateLLTokenAsync(string lltoken)
         {
             httpClient.DefaultRequestHeaders.Remove("token");
             httpClient.DefaultRequestHeaders.Add("token", lltoken);
             var response = await httpClient.GetAsync("api/pwdman/auth/lltoken");
-            await EnsureSuccess(response);
+            await EnsureSuccessAsync(response);
             return await response.Content.ReadFromJsonAsync<AuthenticationResult>();
         }
 
-        public static async Task<AuthenticationResult> AuthenticatePass2(string token, string totp)
+        public static async Task<AuthenticationResult> AuthenticatePass2Async(string token, string totp)
         {
             httpClient.DefaultRequestHeaders.Remove("token");
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.PostAsJsonAsync("api/pwdman/auth2", totp);
-            await EnsureSuccess(response);
+            await EnsureSuccessAsync(response);
             return await response.Content.ReadFromJsonAsync<AuthenticationResult>();
         }
 
-        public static async Task<bool> Logout(string token)
+        public static async Task<bool> LogoutAsync(string token)
         {
             httpClient.DefaultRequestHeaders.Remove("token");
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.GetAsync("api/pwdman/logout");
-            await EnsureSuccess(response);
+            await EnsureSuccessAsync(response);
             return await response.Content.ReadFromJsonAsync<bool>();
         }
 
-        public static async Task<string> GetPasswordFile(string token)
+        public static async Task<string> GetPasswordFileAsync(string token)
         {
             httpClient.DefaultRequestHeaders.Remove("token");
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.GetAsync("api/pwdman/file");
-            await EnsureSuccess(response);
+            await EnsureSuccessAsync(response);
             return await response.Content.ReadFromJsonAsync<string>();
         }
 
-        public static async Task<List<Note>> GetNotes(string token)
+        public static async Task<List<Note>> GetNotesAsync(string token)
         {
             httpClient.DefaultRequestHeaders.Remove("token");
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.GetAsync("api/notes/note");
-            await EnsureSuccess(response);
+            await EnsureSuccessAsync(response);
             return await response.Content.ReadFromJsonAsync<List<Note>>();
         }
 
-        public static async Task<Note> GetNote(string token, long id)
+        public static async Task<Note> GetNoteAsync(string token, long id)
         {
             httpClient.DefaultRequestHeaders.Remove("token");
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.GetAsync($"api/notes/note/{id}");
-            await EnsureSuccess(response);
+            await EnsureSuccessAsync(response);
             return await response.Content.ReadFromJsonAsync<Note>();
         }
 
-        private static async Task EnsureSuccess(HttpResponseMessage response)
+        public static async Task<long> CreateNewNoteAsync(string token, string title)
+        {
+            httpClient.DefaultRequestHeaders.Remove("token");
+            httpClient.DefaultRequestHeaders.Add("token", token);
+            var response = await httpClient.PostAsJsonAsync("api/notes/note",
+                new {
+                    Title = title
+                });
+            await EnsureSuccessAsync(response);
+            return await response.Content.ReadFromJsonAsync<long>();
+        }
+
+        public static async Task DeleteNoteAsync(string token, long id)
+        {
+            httpClient.DefaultRequestHeaders.Remove("token");
+            httpClient.DefaultRequestHeaders.Add("token", token);
+            var response = await httpClient.DeleteAsync($"api/notes/note/{id}");
+            await EnsureSuccessAsync(response);
+        }
+
+        public static async Task<DateTime> UpdateNoteAsync(string token, long id, string title, string content)
+        {
+            httpClient.DefaultRequestHeaders.Remove("token");
+            httpClient.DefaultRequestHeaders.Add("token", token);
+            var response = await httpClient.PutAsJsonAsync("api/notes/note",
+                new {
+                    Id = id,
+                    Title = title, 
+                    Content = content});
+            await EnsureSuccessAsync(response);
+            var lastModifiedUtc = await response.Content.ReadFromJsonAsync<DateTime>();
+            return lastModifiedUtc;
+        }
+
+        private static async Task EnsureSuccessAsync(HttpResponseMessage response)
         {
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
             {

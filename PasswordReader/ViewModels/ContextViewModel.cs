@@ -198,6 +198,8 @@ namespace PasswordReader.ViewModels
 
         public bool CanDecodePasswordItems => _isLoggedIn && _hasPasswordItems;
 
+        public bool CanCreateNote => _isLoggedIn && !string.IsNullOrEmpty(_encryptionKey);
+
         private bool _isRunning;
         public bool IsRunning
         {

@@ -34,7 +34,7 @@ public partial class LogoutPage : ContentPage
         try
         {
             _model.IsRunning = true;
-            await App.ContextService.Logout();
+            await App.ContextService.LogoutAsync();
             _model.Username = App.ContextService.GetUsername();
             _model.UserPhotoUrl = App.ContextService.GetUserPhotoUrl();
             _model.Password = "";

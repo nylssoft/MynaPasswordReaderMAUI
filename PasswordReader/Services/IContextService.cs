@@ -25,15 +25,21 @@ namespace PasswordReader.Services
 
         Task LoginWithTokenAsync();
 
-        Task<List<PasswordItem>> DecodePasswordItemsAsync();
+        Task<List<PasswordItem>> GetPasswordItemsAsync();
 
         Task<string> DecodePasswordAsync(string password);
 
-        Task<List<Note>> DecodeNoteTitlesAsync();
+        Task<List<Note>> GetNotesAsync();
 
-        Task<Note> DecodeNoteAsync(long noteId);
+        Task<Note> GetNoteAsync(long noteId);
 
-        Task Logout();
+        Task<long> CreateNoteAsync();
+
+        Task DeleteNoteAsync(long noteId);
+
+        Task<DateTime> UpdateNoteAsync(long noteId, string title, string content);
+
+        Task LogoutAsync();
 
         bool IsLoggedIn();
         
@@ -54,5 +60,7 @@ namespace PasswordReader.Services
         string GetUsername();
 
         string GetUserPhotoUrl();
+
+        bool NoteChanged { get; set; }
     }
 }

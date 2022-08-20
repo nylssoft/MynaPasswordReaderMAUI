@@ -47,7 +47,7 @@ public partial class NoteListPage : ContentPage
     {
         try
         {
-            var noteItems = await App.ContextService.DecodeNoteTitlesAsync();
+            var noteItems = await App.ContextService.GetNotesAsync();
             _model.NoteItems = new ObservableCollection<NoteItemViewModel>();
             foreach (var noteItem in noteItems)
             {
@@ -64,14 +64,14 @@ public partial class NoteListPage : ContentPage
         }
     }
 
-    private async void Button_Clicked(object sender, EventArgs e)
+    private async void NoteItem_Clicked(object sender, EventArgs e)
     {
         Button b = sender as Button;
         if (b?.BindingContext is NoteItemViewModel n)
         {
             try
             {
-                var note = await App.ContextService.DecodeNoteAsync(n.Id);
+                var note = await App.ContextService.GetNoteAsync(n.Id);
                 _model.SelectedNoteItem = new();
                 _model.SelectedNoteItem.Id = note.id;
                 _model.SelectedNoteItem.Title = note.title;
@@ -87,6 +87,24 @@ public partial class NoteListPage : ContentPage
             {
                 await DisplayAlert("Fehler", ex.Message, "OK");
             }
+        }
+    }
+
+    private async void NewNoteItem_Clicked(object sender, EventArgs e)
+    {
+        try
+        {
+            var id = await App.ContextService.CreateNoteAsync();
+            var note = await App.ContextService.GetNoteAsync(id);
+            _model.NoteItems.Insert(0, new NoteItemViewModel
+            {
+                Id = note.id,
+                Title = note.title
+            });
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Fehler", ex.Message, "OK");
         }
     }
 }

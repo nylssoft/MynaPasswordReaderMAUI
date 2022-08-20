@@ -73,5 +73,18 @@ namespace PasswordReader.ViewModels
             }
         }
 
+        private bool _changed;
+        public bool Changed
+        {
+            get => _changed;
+            set
+            {
+                if (_changed == value) return;
+                _changed = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Changed)));
+            }
+        }
+
+        public bool IsUpdating { get; set; } = true;
     }
 }

@@ -44,7 +44,7 @@ public partial class PasswordListPage : ContentPage
     {
         try
         {
-            var passwordItems = await App.ContextService.DecodePasswordItemsAsync();
+            var passwordItems = await App.ContextService.GetPasswordItemsAsync();
             _model.PasswordItems = new ObservableCollection<PasswordItemViewModel>();
             foreach (var pwdItem in passwordItems)
             {
