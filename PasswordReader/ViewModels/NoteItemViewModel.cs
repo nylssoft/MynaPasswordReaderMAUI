@@ -82,9 +82,29 @@ namespace PasswordReader.ViewModels
                 if (_changed == value) return;
                 _changed = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Changed)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanSaveNote)));
             }
         }
 
         public bool IsUpdating { get; set; } = true;
+
+        public bool CanDeleteNote => !_isRunning;
+
+        public bool CanSaveNote => _changed && !_isRunning;
+
+        private bool _isRunning;
+        public bool IsRunning
+        {
+            get => _isRunning;
+            set
+            {
+                if (_isRunning == value) return;
+                _isRunning = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsRunning)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanDeleteNote)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanSaveNote)));
+            }
+        }
+
     }
 }

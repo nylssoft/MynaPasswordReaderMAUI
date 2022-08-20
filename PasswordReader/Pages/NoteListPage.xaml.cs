@@ -47,19 +47,25 @@ public partial class NoteListPage : ContentPage
     {
         try
         {
-            var noteItems = await App.ContextService.GetNotesAsync();
-            _model.NoteItems = new ObservableCollection<NoteItemViewModel>();
-            foreach (var noteItem in noteItems)
+            if (_model.NoteItems == null)
             {
-                _model.NoteItems.Add(new NoteItemViewModel
+                _model.IsRunning = true;
+                _model.NoteItems = new ObservableCollection<NoteItemViewModel>();
+                var noteItems = await App.ContextService.GetNotesAsync();
+                foreach (var noteItem in noteItems)
                 {
-                    Id = noteItem.id,
-                    Title = noteItem.title
-                });
+                    _model.NoteItems.Add(new NoteItemViewModel
+                    {
+                        Id = noteItem.id,
+                        Title = noteItem.title
+                    });
+                }
+                _model.IsRunning = false;
             }
         }
         catch (Exception ex)
         {
+            _model.IsRunning = false;
             await DisplayAlert("Fehler", ex.Message, "OK");
         }
     }
@@ -71,6 +77,7 @@ public partial class NoteListPage : ContentPage
         {
             try
             {
+                _model.IsRunning = true;
                 var note = await App.ContextService.GetNoteAsync(n.Id);
                 _model.SelectedNoteItem = new();
                 _model.SelectedNoteItem.Id = note.id;
@@ -82,9 +89,11 @@ public partial class NoteListPage : ContentPage
                     { "item", _model.SelectedNoteItem }
                 };
                 await Shell.Current.GoToAsync("noteitem", navigationParameter);
+                _model.IsRunning = false;
             }
             catch (Exception ex)
             {
+                _model.IsRunning = false;
                 await DisplayAlert("Fehler", ex.Message, "OK");
             }
         }
@@ -94,6 +103,7 @@ public partial class NoteListPage : ContentPage
     {
         try
         {
+            _model.IsRunning = true;
             var id = await App.ContextService.CreateNoteAsync();
             var note = await App.ContextService.GetNoteAsync(id);
             _model.NoteItems.Insert(0, new NoteItemViewModel
@@ -101,9 +111,11 @@ public partial class NoteListPage : ContentPage
                 Id = note.id,
                 Title = note.title
             });
+            _model.IsRunning = false;
         }
         catch (Exception ex)
         {
+            _model.IsRunning = false;
             await DisplayAlert("Fehler", ex.Message, "OK");
         }
     }

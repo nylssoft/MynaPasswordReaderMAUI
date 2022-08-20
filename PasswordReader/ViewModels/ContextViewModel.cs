@@ -244,7 +244,7 @@ namespace PasswordReader.ViewModels
 
         public bool CanDecodePasswordItems => _isLoggedIn && _hasPasswordItems;
 
-        public bool CanCreateNote => _isLoggedIn && !string.IsNullOrEmpty(_encryptionKey);
+        public bool CanCreateNote => _isLoggedIn && !string.IsNullOrEmpty(_encryptionKey) && !_isRunning;
 
         private bool _isRunning;
         public bool IsRunning
@@ -258,6 +258,7 @@ namespace PasswordReader.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLogin)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLogout)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanConfirmSecurityCode)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreateNote)));
             }
         }
 

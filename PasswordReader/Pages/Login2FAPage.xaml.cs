@@ -56,9 +56,13 @@ public partial class Login2FAPage : ContentPage
         {
             page = "//encryptionkey";
         }
-        else
+        else if (_model.HasPasswordItems)
         {
             page = "//passwordlist";
+        }
+        else
+        {
+            page = "//notelist";
         }
         await Shell.Current.GoToAsync(page);
     }

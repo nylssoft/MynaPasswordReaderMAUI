@@ -82,12 +82,28 @@ public partial class NoteItemPage : ContentPage
         {
             if (await DisplayAlert("Notiz löschen", "Willst Du die Notiz wirklich löschen?", "Ja", "Nein"))
             {
+                _model.IsRunning = true;
                 await App.ContextService.DeleteNoteAsync(_model.Id);
+                NoteItemViewModel delitem = null;
+                foreach (var noteitem in App.ContextViewModel.NoteItems)
+                {
+                    if (noteitem.Id == _model.Id)
+                    {
+                        delitem = noteitem;
+                        break;
+                    }
+                }
+                if (delitem != null)
+                {
+                    App.ContextViewModel.NoteItems.Remove(delitem);
+                }
                 await Shell.Current.GoToAsync("..");
+                _model.IsRunning = false;
             }
         }
         catch (Exception ex)
         {
+            _model.IsRunning = false;
             await DisplayAlert("Fehler", ex.Message, "OK");
         }
     }
@@ -96,13 +112,23 @@ public partial class NoteItemPage : ContentPage
     {
         try
         {
+            _model.IsRunning = true;
             var lastModifiedUtc = await App.ContextService.UpdateNoteAsync(_model.Id, _model.Title, _model.Content);
             _model.LastModified = lastModifiedUtc.ToLocalTime().ToString("f", new CultureInfo("de-DE"));
             _model.Changed = false;
             App.ContextService.NoteChanged = false;
+            foreach (var noteitem in App.ContextViewModel.NoteItems)
+            {
+                if (noteitem.Id == _model.Id)
+                {
+                    noteitem.Title = _model.Title;
+                }
+            }
+            _model.IsRunning = false;
         }
         catch (Exception ex)
         {
+            _model.IsRunning = false;
             await DisplayAlert("Fehler", ex.Message, "OK");
         }
     }

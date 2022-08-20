@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PasswordReader.Pages.NoteItemPage"
              Title="Notiz">
-    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" Margin="20" RowSpacing="10">
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto,Auto" Margin="20" RowSpacing="10">
         <HorizontalStackLayout Spacing="10">
-            <Button Text="Notiz speichern" WidthRequest="150" HorizontalOptions="Center" Clicked="SaveNote_Clicked" IsEnabled="{Binding Changed}"/>
-            <Button Text="Notiz löschen" WidthRequest="150" HorizontalOptions="Center" Clicked="DeleteNote_Clicked"/>
+            <Button Text="Notiz speichern" WidthRequest="150" HorizontalOptions="Center" Clicked="SaveNote_Clicked" IsEnabled="{Binding CanSaveNote}"/>
+            <Button Text="Notiz löschen" WidthRequest="150" HorizontalOptions="Center" Clicked="DeleteNote_Clicked" IsEnabled="{Binding CanDeleteNote}"/>
         </HorizontalStackLayout>
         <VerticalStackLayout Grid.Row="1">
             <Label Text="Titel:" VerticalOptions="Center"/>
@@ -22,5 +22,6 @@
             <Editor AutoSize="TextChanges" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" Text="{Binding Content}" TextChanged="Note_Changed"/>
         </Border>
         <Button Text="Zurück" Grid.Row="4" WidthRequest="100" HorizontalOptions="Center" Clicked="Back_Clicked"/>
+        <ActivityIndicator Grid.Row="5" IsRunning="{Binding IsRunning}"/>
     </Grid>
 </ContentPage>
