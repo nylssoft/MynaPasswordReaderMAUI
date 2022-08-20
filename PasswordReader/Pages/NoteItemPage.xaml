@@ -19,7 +19,7 @@
             <Label Text="{Binding LastModified}"/>
         </HorizontalStackLayout>
         <Border Grid.Row="3" Padding="10,0,10,0">
-            <Editor IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" Text="{Binding Content}" TextChanged="Note_Changed"/>
+            <Editor AutoSize="TextChanges" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" Text="{Binding Content}" TextChanged="Note_Changed"/>
         </Border>
         <Button Text="Zurück" Grid.Row="4" WidthRequest="100" HorizontalOptions="Center" Clicked="Back_Clicked"/>
     </Grid>
