@@ -38,6 +38,7 @@ public partial class EncryptionKeyPage : ContentPage
         if (await App.ContextService.HasEncryptionKeyAsync())
         {
             _model.EncryptionKey = HIDDEN;
+            showEncryptionKeyButton.Source = App.IsLightAppTheme ? "eye.png" : "eyedark.png";
         }
     }
 
@@ -46,12 +47,12 @@ public partial class EncryptionKeyPage : ContentPage
         if (_model.EncryptionKey == HIDDEN)
         {
             _model.EncryptionKey = await App.ContextService.GetEncryptionKeyAsync();
-            showEncryptionKeyButton.Source = Application.Current.RequestedTheme == AppTheme.Light ? "eyeslash.png" : "eyeslashdark.png";
+            showEncryptionKeyButton.Source = App.IsLightAppTheme ? "eyeslash.png" : "eyeslashdark.png";
         }
         else if (await App.ContextService.HasEncryptionKeyAsync())
         {
             _model.EncryptionKey = HIDDEN;
-            showEncryptionKeyButton.Source = Application.Current.RequestedTheme == AppTheme.Light ? "eye.png" : "eyedark.png";
+            showEncryptionKeyButton.Source = App.IsLightAppTheme ? "eye.png" : "eyedark.png";
         }
     }
 
@@ -64,18 +65,31 @@ public partial class EncryptionKeyPage : ContentPage
     {
         try
         {
-            if (_model.EncryptionKey == HIDDEN)
+            var encryptionKey = _model.EncryptionKey;
+            if (encryptionKey == HIDDEN)
             {
-                _model.EncryptionKey = await App.ContextService.GetEncryptionKeyAsync();
+                encryptionKey = await App.ContextService.GetEncryptionKeyAsync();
             }
-            await App.ContextService.SetEncryptionKeyAsync(_model.EncryptionKey);
-            _model.PasswordItems = null; // force reload
-            await Shell.Current.GoToAsync("//passwordlist");
+            await App.ContextService.SetEncryptionKeyAsync(encryptionKey);
+            string page;
+            if (_model.HasPasswordItems)
+            {
+                page = "//passwordlist";
+            }
+            else
+            {
+                page = "//notelist";
+            }
+            // force reload
+            _model.SelectedPasswordItem = null;
+            _model.SelectedNoteItem = null;
+            _model.PasswordItems = null;
+            _model.NoteItems = null;
+            await Shell.Current.GoToAsync(page);
         }
         catch (Exception ex)
         {
             await DisplayAlert("Fehler", ex.Message, "OK");
         }
     }
-
 }

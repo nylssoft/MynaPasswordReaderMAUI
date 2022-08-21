@@ -118,13 +118,13 @@ public partial class PasswordItemPage : ContentPage
                 var pwd = await App.ContextService.DecodePasswordAsync(_item.Password);
                 _model.Password = pwd;
                 _model.StatusMessage = "Kennwort angezeigt.";
-                showPasswordButton.Source = Application.Current.RequestedTheme == AppTheme.Light ? "eyeslash.png" : "eyeslashdark.png";
+                showPasswordButton.Source = App.IsLightAppTheme ? "eyeslash.png" : "eyeslashdark.png";
             }
             else
             {
                 _model.Password = HIDDEN;
                 _model.StatusMessage = "Kennwort verborgen.";
-                showPasswordButton.Source = Application.Current.RequestedTheme == AppTheme.Light ? "eye.png" : "eyedark.png";
+                showPasswordButton.Source = App.IsLightAppTheme ? "eye.png" : "eyedark.png";
             }
         }
         catch (Exception ex)

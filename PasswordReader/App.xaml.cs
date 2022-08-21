@@ -26,7 +26,9 @@ public partial class App : Application
 
 	public static ContextViewModel ContextViewModel { get; private set; }
 
-	public App(IContextService contextService, ContextViewModel viewModel)
+    public static bool IsLightAppTheme => Current.RequestedTheme == AppTheme.Light || Current.RequestedTheme == AppTheme.Unspecified;
+
+    public App(IContextService contextService, ContextViewModel viewModel)
 	{
         ContextService = contextService;
         ContextViewModel = viewModel;
