@@ -9,7 +9,7 @@
                 <Label Text="Schlüssel:" VerticalOptions="Center"/>
                 <Grid RowDefinitions="40" ColumnDefinitions="*,40" ColumnSpacing="10">
                     <Border Padding="10,0,10,0">
-                        <Entry Text="{Binding EncryptionKey}" IsEnabled="{Binding CanChangeEncryptionKey}" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False"/>
+                        <Entry x:Name="encryptionKeyEntry" Text="{Binding EncryptionKey}" IsEnabled="{Binding CanChangeEncryptionKey}" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False"/>
                     </Border>
                     <ImageButton Grid.Column="1" x:Name="showEncryptionKeyButton" Source="{AppThemeBinding Light=eye.png, Dark=eyedark.png}" IsEnabled="{Binding CanChangeEncryptionKey}" Clicked="ShowEncryptionKey_Clicked"/>
                 </Grid>

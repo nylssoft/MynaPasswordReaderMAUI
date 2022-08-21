@@ -23,6 +23,8 @@ public partial class EncryptionKeyPage : ContentPage
 {
     private ContextViewModel _model;
 
+    private string _savedEncryptionKey;
+
     private const string HIDDEN = "*********";
 
     public EncryptionKeyPage()
@@ -35,23 +37,35 @@ public partial class EncryptionKeyPage : ContentPage
     protected async override void OnAppearing()
     {
         base.OnAppearing();
+        _savedEncryptionKey = "";
         if (await App.ContextService.HasEncryptionKeyAsync())
         {
+            _savedEncryptionKey = await App.ContextService.GetEncryptionKeyAsync();
             _model.EncryptionKey = HIDDEN;
-            showEncryptionKeyButton.Source = App.IsLightAppTheme ? "eye.png" : "eyedark.png";
         }
+        encryptionKeyEntry.IsPassword = true;
+        showEncryptionKeyButton.Source = App.IsLightAppTheme ? "eye.png" : "eyedark.png";
     }
 
-    private async void ShowEncryptionKey_Clicked(object sender, EventArgs e)
+    private void ShowEncryptionKey_Clicked(object sender, EventArgs e)
     {
-        if (_model.EncryptionKey == HIDDEN)
+        if (encryptionKeyEntry.IsPassword)
         {
-            _model.EncryptionKey = await App.ContextService.GetEncryptionKeyAsync();
+            if (_model.EncryptionKey == HIDDEN)
+            {
+                _model.EncryptionKey = _savedEncryptionKey;
+            }
+            encryptionKeyEntry.IsPassword = false;
             showEncryptionKeyButton.Source = App.IsLightAppTheme ? "eyeslash.png" : "eyeslashdark.png";
         }
-        else if (await App.ContextService.HasEncryptionKeyAsync())
+        else
         {
-            _model.EncryptionKey = HIDDEN;
+            if (_model.EncryptionKey != HIDDEN && !string.IsNullOrEmpty(_model.EncryptionKey))
+            {
+                _savedEncryptionKey = _model.EncryptionKey;
+                _model.EncryptionKey = HIDDEN;
+            }
+            encryptionKeyEntry.IsPassword = true;
             showEncryptionKeyButton.Source = App.IsLightAppTheme ? "eye.png" : "eyedark.png";
         }
     }
@@ -68,7 +82,7 @@ public partial class EncryptionKeyPage : ContentPage
             var encryptionKey = _model.EncryptionKey;
             if (encryptionKey == HIDDEN)
             {
-                encryptionKey = await App.ContextService.GetEncryptionKeyAsync();
+                encryptionKey = _savedEncryptionKey;
             }
             await App.ContextService.SetEncryptionKeyAsync(encryptionKey);
             string page;
