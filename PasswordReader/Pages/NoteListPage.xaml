@@ -4,7 +4,7 @@
              x:Class="PasswordReader.Pages.NoteListPage"
              Title="Notizen">
     <ScrollView>
-        <Grid RowDefinitions="*,Auto,Auto" Margin="20">
+        <Grid RowDefinitions="*,Auto,Auto" Margin="20" RowSpacing="10">
             <FlexLayout BindableLayout.ItemsSource="{Binding NoteItems}" Wrap="Wrap" AlignContent="Start">
                 <BindableLayout.ItemTemplate>
                     <DataTemplate>
