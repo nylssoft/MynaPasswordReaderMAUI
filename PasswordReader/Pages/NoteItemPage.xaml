@@ -4,7 +4,7 @@
              x:Class="PasswordReader.Pages.NoteItemPage"
              Title="Notiz">
     <ScrollView>
-        <Grid RowDefinitions="Auto,Auto,Auto,*,Auto,Auto" Margin="20" RowSpacing="10">
+        <Grid RowDefinitions="Auto,Auto,Auto,*,Auto,Auto,Auto" Margin="20" RowSpacing="10">
             <HorizontalStackLayout Spacing="10">
                 <Button Text="Speichern" WidthRequest="100" Clicked="SaveNote_Clicked" IsEnabled="{Binding CanSaveNote}"/>
                 <Button Text="Löschen" WidthRequest="100" Clicked="DeleteNote_Clicked" IsEnabled="{Binding CanDeleteNote}"/>
@@ -22,8 +22,9 @@
             <Border Grid.Row="3" Padding="10,0,10,0">
                 <Editor AutoSize="TextChanges" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" Text="{Binding Content}" TextChanged="Note_Changed"/>
             </Border>
-            <Button Text="Zurück" Grid.Row="4" WidthRequest="100" HorizontalOptions="Center" Clicked="Back_Clicked"/>
-            <ActivityIndicator Grid.Row="5" IsRunning="{Binding IsRunning}"/>
+            <Label Grid.Row="4" Text="{Binding StatusMessage}" TextColor="Green"/>
+            <Button Text="Zurück" Grid.Row="5" WidthRequest="100" HorizontalOptions="Center" Clicked="Back_Clicked"/>
+            <ActivityIndicator Grid.Row="6" IsRunning="{Binding IsRunning}"/>
         </Grid>
     </ScrollView>
 </ContentPage>

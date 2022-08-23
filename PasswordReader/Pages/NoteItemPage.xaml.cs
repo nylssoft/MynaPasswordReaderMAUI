@@ -25,11 +25,28 @@ public partial class NoteItemPage : ContentPage
 {
     private readonly NoteItemViewModel _model;
 
+    private readonly IDispatcherTimer _timer;
+
     public NoteItemPage()
 	{
 		InitializeComponent();
         _model = new NoteItemViewModel();
+        _timer = Dispatcher.CreateTimer();
+        _timer.Interval = TimeSpan.FromSeconds(2);
+        _timer.Tick += ClearStatusMessage;
         BindingContext = _model;
+    }
+
+    private void ClearStatusMessage(object sender, EventArgs e)
+    {
+        _timer.Stop();
+        _model.StatusMessage = "";
+    }
+
+    private void SetStatusMessage(string txt)
+    {
+        _model.StatusMessage = txt;
+        _timer.Start();
     }
 
     private NoteItemViewModel _item;
@@ -125,6 +142,7 @@ public partial class NoteItemPage : ContentPage
                 }
             }
             _model.IsRunning = false;
+            SetStatusMessage("Notiz gespeichert.");
         }
         catch (Exception ex)
         {
