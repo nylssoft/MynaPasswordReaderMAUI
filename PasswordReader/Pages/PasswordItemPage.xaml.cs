@@ -15,6 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+using PasswordReader.Services;
 using PasswordReader.ViewModels;
 
 namespace PasswordReader.Pages;
@@ -23,7 +24,8 @@ namespace PasswordReader.Pages;
 public partial class PasswordItemPage : ContentPage
 {
     private readonly PasswordItemViewModel _model;
-    
+    private string _encryptedPassword;
+
     private const string HIDDEN = "*********";
 
     public PasswordItemPage()
@@ -54,13 +56,18 @@ public partial class PasswordItemPage : ContentPage
         {
             return;
         }
+        _model.IsUpdating = true;
         _model.Name = _item.Name;
         _model.ImageUrl = _item.ImageUrl;
         _model.Url = _item.Url;
         _model.Login = _item.Login;
         _model.Description = _item.Description;
-        _model.Password = HIDDEN;
+        _model.Password = string.IsNullOrEmpty(_item.Password) ? "" : HIDDEN;
         _model.StatusMessage = "";
+        _encryptedPassword = _item.Password;
+        passwordEntry.IsPassword = true;
+        _model.Changed = false;
+        _model.IsUpdating = false;
     }
 
     private async Task CopyToClipboard(string txt, string property)
@@ -78,6 +85,15 @@ public partial class PasswordItemPage : ContentPage
 
     private async void Back_Clicked(object sender, EventArgs e)
     {
+        if (_model.Changed)
+        {
+            if (!await DisplayAlert("Zurück", "Das Kennwort wurde nicht gespeichert. Willst Du die Seite wirklich verlassen?", "Ja", "Nein"))
+            {
+                return;
+            }
+            _model.Changed = false;
+            App.ContextService.PasswordChanged = false;
+        }
         await Shell.Current.GoToAsync("..");
     }
 
@@ -111,25 +127,146 @@ public partial class PasswordItemPage : ContentPage
 
     private async void ShowPassword_Clicked(object sender, EventArgs e)
     {
+        _model.IsUpdating = true;
         try
         {
-            if (_model.Password == HIDDEN)
+            if (passwordEntry.IsPassword)
             {
-                var pwd = await App.ContextService.DecodePasswordAsync(_item.Password);
-                _model.Password = pwd;
+                if (_model.Password == HIDDEN)
+                {
+                    var pwd = await App.ContextService.DecodePasswordAsync(_encryptedPassword);
+                    _model.Password = pwd;
+                }
                 _model.StatusMessage = "Kennwort angezeigt.";
                 showPasswordButton.Source = App.IsLightAppTheme ? "eyeslash.png" : "eyeslashdark.png";
+                passwordEntry.IsPassword = false;
             }
             else
             {
-                _model.Password = HIDDEN;
+                if (_model.Password != HIDDEN && !string.IsNullOrEmpty(_model.Password))
+                {
+                    _encryptedPassword = await App.ContextService.EncodePasswordAsync(_model.Password);
+                    _model.Password = HIDDEN;
+                }
                 _model.StatusMessage = "Kennwort verborgen.";
                 showPasswordButton.Source = App.IsLightAppTheme ? "eye.png" : "eyedark.png";
+                passwordEntry.IsPassword = true;
             }
         }
         catch (Exception ex)
         {
             await DisplayAlert("Fehler", ex.Message, "OK");
+        }
+        _model.IsUpdating = false;
+    }
+
+    private async void SavePassword_Clicked(object sender, EventArgs e)
+    {
+        _model.IsRunning = true;
+        var backup = new PasswordItemViewModel
+        {
+            Name = _item.Name,
+            Login = _item.Login,
+            Password = _item.Password,
+            Url = _item.Url,
+            Description = _item.Description,
+            ImageUrl = _item.ImageUrl
+        };
+        var nameChanged = _item.Name != _model.Name;
+        var urlChanged = _item.Url != _model.Url;
+        _item.Name = _model.Name;
+        _item.Login = _model.Login;
+        if (string.IsNullOrEmpty(_model.Password))
+        {
+            _item.Password = "";
+        }
+        else
+        {
+            _item.Password = _model.Password == HIDDEN ? _encryptedPassword : await App.ContextService.EncodePasswordAsync(_model.Password);
+        }
+        _item.Url = _model.Url;
+        _item.Description = _model.Description;
+        try
+        {
+            await App.ContextViewModel.UploadPasswordItemsAsync();
+            if (urlChanged && !string.IsNullOrEmpty(_item.Url))
+            {
+                // fetch image url again
+                PasswordItem p = new();
+                p.Url = _item.Url;
+                _item.ImageUrl = p.ImageUrl;
+            }
+            if (nameChanged)
+            {
+                // insert into new position, items are ordered by name
+                App.ContextViewModel.PasswordItems.Remove(_item);
+                int pos = 0;
+                foreach (var previtem in App.ContextViewModel.PasswordItems)
+                {
+                    if (previtem.Name.CompareTo(_item.Name) >= 0)
+                    {
+                        break;
+                    }
+                    pos++;
+                }
+                App.ContextViewModel.PasswordItems.Insert(pos, _item);
+            }
+            App.ContextService.PasswordChanged = false;
+            _model.Changed = false;
+            _model.IsRunning = false;
+            _model.StatusMessage = "Kennwort gespeichert.";
+        }
+        catch (Exception ex)
+        {
+            // restore previous item if not saved
+            _item.Name = backup.Name;
+            _item.Login = backup.Login;
+            _item.Password = backup.Password;
+            _item.Url = backup.Url;
+            _item.Description = backup.Description;
+            _item.ImageUrl = backup.ImageUrl;
+            _model.IsRunning = false;
+            await DisplayAlert("Fehler", ex.Message, "OK");
+        }
+    }
+
+    private async void DeletePassword_Clicked(object sender, EventArgs e)
+    {
+        if (await DisplayAlert("Kennwort löschen", "Willst Du das Kennwort wirklich löschen?", "Ja", "Nein"))
+        {
+            _model.IsRunning = true;
+            int pos = 0;
+            foreach (var pwditem in App.ContextViewModel.PasswordItems)
+            {
+                if (pwditem == _item)
+                {
+                    break;
+                }
+                pos++;
+            }
+            App.ContextViewModel.PasswordItems.Remove(_item);
+            try
+            {
+                await App.ContextViewModel.UploadPasswordItemsAsync();
+                _model.IsRunning = false;
+                await Shell.Current.GoToAsync("..");
+            }
+            catch (Exception ex)
+            {
+                // insert item again if not saved
+                App.ContextViewModel.PasswordItems.Insert(pos, _item);
+                _model.IsRunning = false;
+                await DisplayAlert("Fehler", ex.Message, "OK");
+            }
+        }
+    }
+
+    private void Password_Changed(object sender, TextChangedEventArgs e)
+    {
+        if (!_model.IsUpdating)
+        {
+            _model.Changed = true;
+            App.ContextService.PasswordChanged = true;
         }
     }
 }

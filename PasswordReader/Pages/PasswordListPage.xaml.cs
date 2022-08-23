@@ -34,9 +34,13 @@ public partial class PasswordListPage : ContentPage
     protected async override void OnAppearing()
     {
         base.OnAppearing();
-        if (_model.CanDecodePasswordItems && _model.PasswordItems == null)
+        if (_model.PasswordItems == null)
         {
-            await Decode();
+            _model.PasswordItems = new ObservableCollection<PasswordItemViewModel>();
+            if (App.ContextService.HasPasswordItems())
+            {
+                await Decode();
+            }
         }
     }
 
@@ -44,8 +48,8 @@ public partial class PasswordListPage : ContentPage
     {
         try
         {
+            _model.IsRunning = true;
             var passwordItems = await App.ContextService.GetPasswordItemsAsync();
-            _model.PasswordItems = new ObservableCollection<PasswordItemViewModel>();
             foreach (var pwdItem in passwordItems)
             {
                 _model.PasswordItems.Add(new PasswordItemViewModel
@@ -58,9 +62,11 @@ public partial class PasswordListPage : ContentPage
                     Password = pwdItem.Password
                 });
             }
+            _model.IsRunning = false;
         }
         catch (Exception ex)
         {
+            _model.IsRunning = false;
             await DisplayAlert("Fehler", ex.Message, "OK");
         }
     }
@@ -82,6 +88,42 @@ public partial class PasswordListPage : ContentPage
         }
         catch (Exception ex)
         {
+            await DisplayAlert("Fehler", ex.Message, "OK");
+        }
+    }
+
+    private async void NewPassword_Clicked(object sender, EventArgs e)
+    {
+        _model.IsRunning = true;
+        var pwditemmodel = new PasswordItemViewModel
+        {
+            Name = "Neu",
+            Description = "",
+            Login = "",
+            Password = "",
+            Url = ""
+        };
+        int pos = 0;
+        foreach (var previtem in _model.PasswordItems)
+        {
+            if (previtem.Name.CompareTo(pwditemmodel.Name) >= 0)
+            {
+                break;
+            }
+            pos++;
+        }
+        _model.PasswordItems.Insert(pos, pwditemmodel);
+        try
+        {
+            await _model.UploadPasswordItemsAsync();
+            _model.IsRunning = false;
+            _model.SelectedPasswordItem = pwditemmodel;
+        }
+        catch (Exception ex)
+        {
+            // remove added item if not saved
+            _model.PasswordItems.Remove(pwditemmodel);
+            _model.IsRunning = false;
             await DisplayAlert("Fehler", ex.Message, "OK");
         }
     }

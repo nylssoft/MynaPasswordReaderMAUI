@@ -15,7 +15,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text;
 
 namespace PasswordReader.Services
 {
@@ -179,6 +181,16 @@ namespace PasswordReader.Services
             await EnsureSuccessAsync(response);
             var lastModifiedUtc = await response.Content.ReadFromJsonAsync<DateTime>();
             return lastModifiedUtc;
+        }
+
+        public static async Task UploadPasswordFile(string token, string content)
+        {
+            httpClient.DefaultRequestHeaders.Remove("token");
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.DefaultRequestHeaders.Add("token", token);
+            var response = await httpClient.PostAsync("api/pwdman/file", new StringContent(content, Encoding.UTF8, "application/json"));
+            await EnsureSuccessAsync(response);
         }
 
         private static async Task EnsureSuccessAsync(HttpResponseMessage response)

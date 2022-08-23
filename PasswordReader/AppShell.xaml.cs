@@ -54,13 +54,14 @@ public partial class AppShell : Shell
     protected override async void OnNavigating(ShellNavigatingEventArgs args)
     {
         base.OnNavigating(args);
-        if (App.ContextService.NoteChanged)
+        if (App.ContextService.NoteChanged || App.ContextService.PasswordChanged)
         {
             ShellNavigatingDeferral token = args.GetDeferral();
             var leavePage = await DisplayAlert("Seite verlassen", "Die Änderungen wurden nicht gespeichert. Willst Du die Seite wirklich verlassen?", "Ja", "Nein");
             if (leavePage)
             {
                 App.ContextService.NoteChanged = false;
+                App.ContextService.PasswordChanged = false;
             }
             else
             {

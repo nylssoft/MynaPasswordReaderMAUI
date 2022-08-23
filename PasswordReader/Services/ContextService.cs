@@ -40,9 +40,13 @@ namespace PasswordReader.Services
 
         private bool _noteChanged = false;
 
+        private bool _passwordChanged = false;
+
         private const string UNKNOWN = "???????";
 
         public bool NoteChanged { get => _noteChanged; set => _noteChanged = value; }
+
+        public bool PasswordChanged { get => _passwordChanged; set => _passwordChanged = value; }
 
         private async Task InitAsync()
         {
@@ -219,7 +223,15 @@ namespace PasswordReader.Services
             if (encryptionKey != currentKey)
             {
                 _encryptionKey = encryptionKey;
-                await SecureStorage.Default.SetAsync($"encryptkey-{_userModel.id}", _encryptionKey);
+                var storageKey = $"encryptkey-{_userModel.id}";
+                if (string.IsNullOrEmpty(_encryptionKey))
+                {
+                    SecureStorage.Default.Remove(storageKey);
+                }
+                else
+                {
+                    await SecureStorage.Default.SetAsync(storageKey, _encryptionKey);
+                }
             }
         }
 
@@ -233,13 +245,33 @@ namespace PasswordReader.Services
             return DecryptPasswordItems(encrypted, encryptionKey, _userModel.passwordManagerSalt);
         }
 
-        public async Task<string> DecodePasswordAsync(string password)
+        public async Task UploadPasswordItemsAsync(List<PasswordItem> items)
+        {
+            if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
+            var encryptionKey = await GetEncryptionKeyAsync();
+            if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
+            var data = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(items));
+            var encrypted = Encrypt(data, encryptionKey, _userModel.passwordManagerSalt);
+            var content = JsonSerializer.Serialize(Convert.ToHexString(encrypted));
+            await RestClient.UploadPasswordFile(_token, content);
+        }
+
+        public async Task<string> DecodePasswordAsync(string encryptedPassword)
         {
             if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
             if (!_userModel.hasPasswordManagerFile) throw new ArgumentException("Es wurden keine Passwörter hochgeladen.");
             var encryptionKey = await GetEncryptionKeyAsync();
             if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
-            return Encoding.UTF8.GetString(Decrypt(Convert.FromHexString(password), encryptionKey, _userModel.passwordManagerSalt));
+            return DecodeText(encryptedPassword, encryptionKey, _userModel.passwordManagerSalt);
+        }
+
+        public async Task<string> EncodePasswordAsync(string password)
+        {
+            if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
+            if (!_userModel.hasPasswordManagerFile) throw new ArgumentException("Es wurden keine Passwörter hochgeladen.");
+            var encryptionKey = await GetEncryptionKeyAsync();
+            if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
+            return EncodeText(password, encryptionKey, _userModel.passwordManagerSalt);
         }
 
         public async Task<List<Note>> GetNotesAsync()
@@ -407,7 +439,6 @@ namespace PasswordReader.Services
                 HashAlgorithmName.SHA256,
                 256 / 8);
             byte[] plainText = new byte[chipherText.Length];
-#pragma warning disable CA1416 // Validate platform compatibility
             using (var cipher = new AesGcm(key))
             {
                 try
@@ -419,7 +450,6 @@ namespace PasswordReader.Services
                     throw new ArgumentException("Der Schlüssel ist ungültig.");
                 }
             }
-#pragma warning restore CA1416 // Validate platform compatibility
             return plainText;
         }
     }

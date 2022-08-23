@@ -27,7 +27,11 @@ namespace PasswordReader.Services
 
         Task<List<PasswordItem>> GetPasswordItemsAsync();
 
-        Task<string> DecodePasswordAsync(string password);
+        Task UploadPasswordItemsAsync(List<PasswordItem> items);
+
+        Task<string> DecodePasswordAsync(string encryptedPassword);
+
+        Task<string> EncodePasswordAsync(string password);
 
         Task<List<Note>> GetNotesAsync();
 
@@ -66,5 +70,7 @@ namespace PasswordReader.Services
         string GetLastLogin();
 
         bool NoteChanged { get; set; }
+
+        bool PasswordChanged { get; set; }
     }
 }

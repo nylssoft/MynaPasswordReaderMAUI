@@ -15,6 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+using PasswordReader.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -37,7 +38,6 @@ namespace PasswordReader.ViewModels
             IsLoggedIn = App.ContextService.IsLoggedIn();
             Requires2FA = App.ContextService.Requires2FA();
             HasLoginToken = await App.ContextService.HasLoginTokenAsync();
-            HasPasswordItems = App.ContextService.HasPasswordItems();
             PasswordItems = null;
             SelectedPasswordItem = null;
             NoteItems = null;
@@ -78,6 +78,7 @@ namespace PasswordReader.ViewModels
                 _encryptionKey = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EncryptionKey)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreateNote)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreatePassword)));
             }
         }
 
@@ -117,8 +118,8 @@ namespace PasswordReader.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLogin)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLogout)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanChangeEncryptionKey)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanDecodePasswordItems)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreateNote)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreatePassword)));
             }
         }
 
@@ -134,19 +135,6 @@ namespace PasswordReader.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLogin)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLogout)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanConfirmSecurityCode)));
-            }
-        }
-
-        private bool _hasPasswordItems;
-        public bool HasPasswordItems
-        {
-            get => _hasPasswordItems;
-            set
-            {
-                if (_hasPasswordItems == value) return;
-                _hasPasswordItems = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasPasswordItems)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanDecodePasswordItems)));
             }
         }
 
@@ -242,9 +230,9 @@ namespace PasswordReader.ViewModels
 
         public bool CanLogout => _isLoggedIn || _requires2FA;
 
-        public bool CanDecodePasswordItems => _isLoggedIn && _hasPasswordItems;
-
         public bool CanCreateNote => _isLoggedIn && !string.IsNullOrEmpty(_encryptionKey) && !_isRunning;
+
+        public bool CanCreatePassword => _isLoggedIn && !string.IsNullOrEmpty(_encryptionKey) && !_isRunning;
 
         private bool _isRunning;
         public bool IsRunning
@@ -259,8 +247,25 @@ namespace PasswordReader.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLogout)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanConfirmSecurityCode)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreateNote)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreatePassword)));
             }
         }
 
+        public async Task UploadPasswordItemsAsync()
+        {
+            List<PasswordItem> pwditems = new();
+            foreach (var itemModel in _passwordItems)
+            {
+                pwditems.Add(new PasswordItem
+                {
+                    Name = itemModel.Name,
+                    Login = itemModel.Login,
+                    Password = itemModel.Password,
+                    Description = itemModel.Description,
+                    Url = itemModel.Url
+                });
+            }
+            await App.ContextService.UploadPasswordItemsAsync(pwditems);
+        }
     }
 }

@@ -6,8 +6,8 @@
     <ScrollView>
         <Grid RowDefinitions="Auto,Auto,Auto,*,Auto,Auto" Margin="20" RowSpacing="10">
             <HorizontalStackLayout Spacing="10">
-                <Button Text="Notiz speichern" WidthRequest="150" HorizontalOptions="Center" Clicked="SaveNote_Clicked" IsEnabled="{Binding CanSaveNote}"/>
-                <Button Text="Notiz löschen" WidthRequest="150" HorizontalOptions="Center" Clicked="DeleteNote_Clicked" IsEnabled="{Binding CanDeleteNote}"/>
+                <Button Text="Speichern" WidthRequest="150" HorizontalOptions="Center" Clicked="SaveNote_Clicked" IsEnabled="{Binding CanSaveNote}"/>
+                <Button Text="Löschen" WidthRequest="150" HorizontalOptions="Center" Clicked="DeleteNote_Clicked" IsEnabled="{Binding CanDeleteNote}"/>
             </HorizontalStackLayout>
             <VerticalStackLayout Grid.Row="1">
                 <Label Text="Titel:" VerticalOptions="Center"/>

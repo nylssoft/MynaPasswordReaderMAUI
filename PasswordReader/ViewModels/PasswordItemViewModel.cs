@@ -107,5 +107,39 @@ namespace PasswordReader.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StatusMessage)));
             }
         }
+
+        private bool _changed;
+        public bool Changed
+        {
+            get => _changed;
+            set
+            {
+                if (_changed == value) return;
+                _changed = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Changed)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanSavePassword)));
+            }
+        }
+
+        public bool IsUpdating { get; set; } = true;
+
+        public bool CanDeletePassword => !_isRunning;
+
+        public bool CanSavePassword => _changed && !_isRunning;
+
+        private bool _isRunning;
+        public bool IsRunning
+        {
+            get => _isRunning;
+            set
+            {
+                if (_isRunning == value) return;
+                _isRunning = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsRunning)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanDeletePassword)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanSavePassword)));
+            }
+        }
+
     }
 }

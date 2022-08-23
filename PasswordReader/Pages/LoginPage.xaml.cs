@@ -80,13 +80,9 @@ public partial class LoginPage : ContentPage
         {
             page = "//encryptionkey";
         }
-        else if (_model.HasPasswordItems)
-        {
-            page = "//passwordlist";
-        }
         else
         {
-            page = "//notelist";
+            page = "//passwordlist";
         }
         await Shell.Current.GoToAsync(page);
     }

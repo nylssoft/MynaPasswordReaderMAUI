@@ -85,21 +85,12 @@ public partial class EncryptionKeyPage : ContentPage
                 encryptionKey = _savedEncryptionKey;
             }
             await App.ContextService.SetEncryptionKeyAsync(encryptionKey);
-            string page;
-            if (_model.HasPasswordItems)
-            {
-                page = "//passwordlist";
-            }
-            else
-            {
-                page = "//notelist";
-            }
             // force reload
             _model.SelectedPasswordItem = null;
             _model.SelectedNoteItem = null;
             _model.PasswordItems = null;
             _model.NoteItems = null;
-            await Shell.Current.GoToAsync(page);
+            await Shell.Current.GoToAsync("//passwordlist");
         }
         catch (Exception ex)
         {
