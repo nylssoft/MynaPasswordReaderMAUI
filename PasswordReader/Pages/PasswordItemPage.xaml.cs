@@ -24,7 +24,10 @@ namespace PasswordReader.Pages;
 public partial class PasswordItemPage : ContentPage
 {
     private readonly PasswordItemViewModel _model;
+    
     private string _encryptedPassword;
+    
+    private readonly IDispatcherTimer _timer;
 
     private const string HIDDEN = "*********";
 
@@ -32,7 +35,22 @@ public partial class PasswordItemPage : ContentPage
 	{
 		InitializeComponent();
         _model = new PasswordItemViewModel();
+        _timer = Dispatcher.CreateTimer();
+        _timer.Interval = TimeSpan.FromSeconds(2);
+        _timer.Tick += ClearStatusMessage;
         BindingContext = _model;
+    }
+
+    private void ClearStatusMessage(object sender, EventArgs e)
+    {
+        _timer.Stop();
+        _model.StatusMessage = "";
+    }
+
+    private void SetStatusMessage(string txt)
+    {
+        _model.StatusMessage = txt;
+        _timer.Start();
     }
 
     private PasswordItemViewModel _item;
@@ -75,7 +93,7 @@ public partial class PasswordItemPage : ContentPage
         try
         {
             await Clipboard.Default.SetTextAsync(txt);
-            _model.StatusMessage = $"{property} in die Zwischenablage kopiert.";
+            SetStatusMessage($"{property} in die Zwischenablage kopiert.");
         }
         catch (Exception ex)
         {
@@ -137,7 +155,7 @@ public partial class PasswordItemPage : ContentPage
                     var pwd = await App.ContextService.DecodePasswordAsync(_encryptedPassword);
                     _model.Password = pwd;
                 }
-                _model.StatusMessage = "Kennwort angezeigt.";
+                SetStatusMessage("Kennwort angezeigt.");
                 showPasswordButton.Source = App.IsLightAppTheme ? "eyeslash.png" : "eyeslashdark.png";
                 passwordEntry.IsPassword = false;
             }
@@ -148,7 +166,7 @@ public partial class PasswordItemPage : ContentPage
                     _encryptedPassword = await App.ContextService.EncodePasswordAsync(_model.Password);
                     _model.Password = HIDDEN;
                 }
-                _model.StatusMessage = "Kennwort verborgen.";
+                SetStatusMessage("Kennwort verborgen.");
                 showPasswordButton.Source = App.IsLightAppTheme ? "eye.png" : "eyedark.png";
                 passwordEntry.IsPassword = true;
             }
@@ -214,7 +232,7 @@ public partial class PasswordItemPage : ContentPage
             App.ContextService.PasswordChanged = false;
             _model.Changed = false;
             _model.IsRunning = false;
-            _model.StatusMessage = "Kennwort gespeichert.";
+            SetStatusMessage("Kennwort gespeichert.");
         }
         catch (Exception ex)
         {
