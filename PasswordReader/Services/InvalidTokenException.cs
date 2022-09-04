@@ -1,4 +1,4 @@
-/*
+﻿/*
     Myna Password Reader MAUI
     Copyright (C) 2022 Niels Stockfleth
 
@@ -15,35 +15,10 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-using PasswordReader.ViewModels;
-
-namespace PasswordReader.Pages;
-
-public partial class ProfilePage : ContentPage
+namespace PasswordReader.Services
 {
-    private ContextViewModel _model;
-
-    public ProfilePage()
-	{
-		InitializeComponent();
-        _model = App.ContextViewModel;
-    }
-
-    private async void Logout_Clicked(object sender, EventArgs e)
+    public class InvalidTokenException : Exception
     {
-        try
-        {
-            _model.IsRunning = true;
-            await App.ContextService.LogoutAsync();
-            await Shell.Current.GoToAsync("//login");
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Fehler", ex.Message, "OK");
-        }
-        finally
-        {
-            _model.IsRunning = false;
-        }
+        public InvalidTokenException(string message) : base(message) {}
     }
 }

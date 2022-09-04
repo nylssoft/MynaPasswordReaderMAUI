@@ -39,13 +39,18 @@ public partial class PasswordListPage : ContentPage
             _model.PasswordItems = new ObservableCollection<PasswordItemViewModel>();
             if (App.ContextService.HasPasswordItems())
             {
-                await Decode();
+                await GetPasswordItemsAsync();
             }
         }
     }
 
-    private async Task Decode()
+    private async Task GetPasswordItemsAsync()
     {
+        if (!_model.IsLoggedIn)
+        {
+            await DisplayAlert("Fehler", "Du bist nicht mehr angemeldet.", "OK");
+            return;
+        }
         try
         {
             _model.IsRunning = true;
@@ -73,6 +78,11 @@ public partial class PasswordListPage : ContentPage
 
     private async void ListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
     {
+        if (!_model.IsLoggedIn)
+        {
+            await DisplayAlert("Fehler", "Du bist nicht mehr angemeldet.", "OK");
+            return;
+        }
         try
         {
             if (_model.SelectedPasswordItem == null)
@@ -94,6 +104,11 @@ public partial class PasswordListPage : ContentPage
 
     private async void NewPassword_Clicked(object sender, EventArgs e)
     {
+        if (!_model.IsLoggedIn)
+        {
+            await DisplayAlert("Fehler", "Du bist nicht mehr angemeldet.", "OK");
+            return;
+        }
         _model.IsRunning = true;
         var pwditemmodel = new PasswordItemViewModel
         {
@@ -121,8 +136,11 @@ public partial class PasswordListPage : ContentPage
         }
         catch (Exception ex)
         {
-            // remove added item if not saved
-            _model.PasswordItems.Remove(pwditemmodel);
+            if (_model.IsLoggedIn)
+            {
+                // remove added item if not saved
+                _model.PasswordItems.Remove(pwditemmodel);
+            }
             _model.IsRunning = false;
             await DisplayAlert("Fehler", ex.Message, "OK");
         }

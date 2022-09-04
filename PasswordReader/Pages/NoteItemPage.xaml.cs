@@ -81,7 +81,7 @@ public partial class NoteItemPage : ContentPage
 
     private async void Back_Clicked(object sender, EventArgs e)
     {
-        if (_model.Changed)
+        if (_model.Changed && App.ContextViewModel.IsLoggedIn)
         {
             if (!await DisplayAlert("Zurück", "Die Notiz wurde nicht gespeichert. Willst Du die Seite wirklich verlassen?", "Ja", "Nein"))
             {
@@ -95,6 +95,11 @@ public partial class NoteItemPage : ContentPage
 
     private async void DeleteNote_Clicked(object sender, EventArgs e)
     {
+        if (!App.ContextViewModel.IsLoggedIn)
+        {
+            await DisplayAlert("Fehler", "Du bist nicht mehr angemeldet.", "OK");
+            return;
+        }
         try
         {
             if (await DisplayAlert("Notiz löschen", "Willst Du die Notiz wirklich löschen?", "Ja", "Nein"))
@@ -127,6 +132,11 @@ public partial class NoteItemPage : ContentPage
 
     private async void SaveNote_Clicked(object sender, EventArgs e)
     {
+        if (!App.ContextViewModel.IsLoggedIn)
+        {
+            await DisplayAlert("Fehler", "Du bist nicht mehr angemeldet.", "OK");
+            return;
+        }
         try
         {
             _model.IsRunning = true;
@@ -153,7 +163,7 @@ public partial class NoteItemPage : ContentPage
 
     private void Note_Changed(object sender, TextChangedEventArgs e)
     {
-        if (!_model.IsUpdating)
+        if (!_model.IsUpdating && App.ContextViewModel.IsLoggedIn)
         {
             _model.Changed = true;
             App.ContextService.NoteChanged = true;

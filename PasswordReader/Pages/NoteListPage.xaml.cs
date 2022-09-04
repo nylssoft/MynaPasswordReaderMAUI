@@ -39,12 +39,17 @@ public partial class NoteListPage : ContentPage
         _model.SelectedNoteItem = new();
         if (App.ContextService.IsLoggedIn())
         {
-            await Decode();
+            await GetNotesAsync();
         }
     }
 
-    private async Task Decode()
+    private async Task GetNotesAsync()
     {
+        if (!_model.IsLoggedIn)
+        {
+            await DisplayAlert("Fehler", "Du bist nicht mehr angemeldet.", "OK");
+            return;
+        }
         try
         {
             if (_model.NoteItems == null)
@@ -72,6 +77,11 @@ public partial class NoteListPage : ContentPage
 
     private async void NoteItem_Clicked(object sender, EventArgs e)
     {
+        if (!_model.IsLoggedIn)
+        {
+            await DisplayAlert("Fehler", "Du bist nicht mehr angemeldet.", "OK");
+            return;
+        }
         Button b = sender as Button;
         if (b?.BindingContext is NoteItemViewModel n)
         {
@@ -101,6 +111,11 @@ public partial class NoteListPage : ContentPage
 
     private async void NewNoteItem_Clicked(object sender, EventArgs e)
     {
+        if (!_model.IsLoggedIn)
+        {
+            await DisplayAlert("Fehler", "Du bist nicht mehr angemeldet.", "OK");
+            return;
+        }
         try
         {
             _model.IsRunning = true;

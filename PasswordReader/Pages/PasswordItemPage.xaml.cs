@@ -103,7 +103,7 @@ public partial class PasswordItemPage : ContentPage
 
     private async void Back_Clicked(object sender, EventArgs e)
     {
-        if (_model.Changed)
+        if (_model.Changed && App.ContextViewModel.IsLoggedIn)
         {
             if (!await DisplayAlert("Zurück", "Das Kennwort wurde nicht gespeichert. Willst Du die Seite wirklich verlassen?", "Ja", "Nein"))
             {
@@ -127,6 +127,11 @@ public partial class PasswordItemPage : ContentPage
 
     private async void CopyPassword_Clicked(object sender, EventArgs e)
     {
+        if (!App.ContextViewModel.IsLoggedIn)
+        {
+            await DisplayAlert("Fehler", "Du bist nicht mehr angemeldet.", "OK");
+            return;
+        }
         try
         {
             var pwd = await App.ContextService.DecodePasswordAsync(_item.Password);
@@ -145,6 +150,11 @@ public partial class PasswordItemPage : ContentPage
 
     private async void ShowPassword_Clicked(object sender, EventArgs e)
     {
+        if (!App.ContextViewModel.IsLoggedIn)
+        {
+            await DisplayAlert("Fehler", "Du bist nicht mehr angemeldet.", "OK");
+            return;
+        }
         _model.IsUpdating = true;
         try
         {
@@ -180,6 +190,11 @@ public partial class PasswordItemPage : ContentPage
 
     private async void SavePassword_Clicked(object sender, EventArgs e)
     {
+        if (!App.ContextViewModel.IsLoggedIn)
+        {
+            await DisplayAlert("Fehler", "Du bist nicht mehr angemeldet.", "OK");
+            return;
+        }
         _model.IsRunning = true;
         var backup = new PasswordItemViewModel
         {
@@ -250,6 +265,11 @@ public partial class PasswordItemPage : ContentPage
 
     private async void DeletePassword_Clicked(object sender, EventArgs e)
     {
+        if (!App.ContextViewModel.IsLoggedIn)
+        {
+            await DisplayAlert("Fehler", "Du bist nicht mehr angemeldet.", "OK");
+            return;
+        }
         if (await DisplayAlert("Kennwort löschen", "Willst Du das Kennwort wirklich löschen?", "Ja", "Nein"))
         {
             _model.IsRunning = true;
@@ -271,8 +291,11 @@ public partial class PasswordItemPage : ContentPage
             }
             catch (Exception ex)
             {
-                // insert item again if not saved
-                App.ContextViewModel.PasswordItems.Insert(pos, _item);
+                if (App.ContextViewModel.IsLoggedIn)
+                {
+                    // insert item again if not saved
+                    App.ContextViewModel.PasswordItems.Insert(pos, _item);
+                }
                 _model.IsRunning = false;
                 await DisplayAlert("Fehler", ex.Message, "OK");
             }
@@ -281,7 +304,7 @@ public partial class PasswordItemPage : ContentPage
 
     private void Password_Changed(object sender, TextChangedEventArgs e)
     {
-        if (!_model.IsUpdating)
+        if (!_model.IsUpdating && App.ContextViewModel.IsLoggedIn)
         {
             _model.Changed = true;
             App.ContextService.PasswordChanged = true;

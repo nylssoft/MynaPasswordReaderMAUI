@@ -198,7 +198,12 @@ namespace PasswordReader.Services
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
             {
                 var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-                throw new ArgumentException(Translate(problemDetails.title));
+                var message = Translate(problemDetails.title);
+                if (problemDetails.title == "ERROR_INVALID_TOKEN")
+                {
+                    throw new InvalidTokenException(message);
+                }
+                throw new ArgumentException(message);
             }
         }
     }

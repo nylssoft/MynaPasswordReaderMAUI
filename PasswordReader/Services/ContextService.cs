@@ -73,14 +73,14 @@ namespace PasswordReader.Services
             }
             await InitAsync();
             var authResult = await RestClient.AuthenticateAsync(username, password, clientInfo, "de");
+            if (!authResult.requiresPass2)
+            {
+                _userModel = await RestClient.GetUserAsync(authResult.token);
+                _loggedIn = true;
+            }
             _token = authResult.token;
             _loginToken = authResult.longLivedToken;
             _requires2FA = authResult.requiresPass2;
-            if (!_requires2FA)
-            {
-                _userModel = await RestClient.GetUserAsync(_token);
-                _loggedIn = true;
-            }
             if (string.IsNullOrEmpty(_loginToken))
             {
                 SecureStorage.Default.Remove("lltoken");
@@ -97,21 +97,29 @@ namespace PasswordReader.Services
             if (_loggedIn) throw new ArgumentException("Du bist noch angemeldet.");
             if (!_requires2FA) throw new ArgumentException("2-Faktor-Anmeldung ist nicht aktiviert.");
             await InitAsync();
-            var authResult = await RestClient.AuthenticatePass2Async(_token, securityCode);
-            _token = authResult.token;
-            _loginToken = authResult.longLivedToken;
-            if (string.IsNullOrEmpty(_loginToken))
+            try
             {
-                SecureStorage.Default.Remove("lltoken");
-                _loginToken = "";
+                var authResult = await RestClient.AuthenticatePass2Async(_token, securityCode);
+                _token = authResult.token;
+                _loginToken = authResult.longLivedToken;
+                if (string.IsNullOrEmpty(_loginToken))
+                {
+                    SecureStorage.Default.Remove("lltoken");
+                    _loginToken = "";
+                }
+                else
+                {
+                    await SecureStorage.Default.SetAsync("lltoken", _loginToken);
+                }
+                _userModel = await RestClient.GetUserAsync(_token);
+                _loggedIn = true;
+                _requires2FA = false;
             }
-            else
+            catch (InvalidTokenException ex)
             {
-                await SecureStorage.Default.SetAsync("lltoken", _loginToken);
+                await LogoutAsync();
+                throw ex;
             }
-            _userModel = await RestClient.GetUserAsync(_token);
-            _loggedIn = true;
-            _requires2FA = false;
         }
 
         public async Task LoginWithTokenAsync()
@@ -122,8 +130,8 @@ namespace PasswordReader.Services
             try
             {
                 var authResult = await RestClient.AuthenticateLLTokenAsync(_loginToken);
+                _userModel = await RestClient.GetUserAsync(authResult.token);
                 _token = authResult.token;
-                _userModel = await RestClient.GetUserAsync(_token);
                 _loggedIn = true;
                 _requires2FA = false;
                 if (_loginToken != authResult.longLivedToken)
@@ -156,7 +164,10 @@ namespace PasswordReader.Services
             _loginToken = "";
             _userModel = null;
             _encryptionKey = null;
+            NoteChanged = false;
+            PasswordChanged = false;
             SecureStorage.Default.Remove("lltoken");
+            await App.ContextViewModel.InitAsync();
         }
 
         public bool IsLoggedIn()
@@ -241,8 +252,16 @@ namespace PasswordReader.Services
             if (!_userModel.hasPasswordManagerFile) throw new ArgumentException("Es wurden keine Passwörter hochgeladen.");
             var encryptionKey = await GetEncryptionKeyAsync();
             if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
-            var encrypted = await RestClient.GetPasswordFileAsync(_token);
-            return DecryptPasswordItems(encrypted, encryptionKey, _userModel.passwordManagerSalt);
+            try
+            {
+                var encrypted = await RestClient.GetPasswordFileAsync(_token);
+                return DecryptPasswordItems(encrypted, encryptionKey, _userModel.passwordManagerSalt);
+            }
+            catch (InvalidTokenException ex)
+            {
+                await LogoutAsync();
+                throw ex;
+            }
         }
 
         public async Task UploadPasswordItemsAsync(List<PasswordItem> items)
@@ -253,10 +272,18 @@ namespace PasswordReader.Services
             var data = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(items));
             var encrypted = Encrypt(data, encryptionKey, _userModel.passwordManagerSalt);
             var content = JsonSerializer.Serialize(Convert.ToHexString(encrypted));
-            await RestClient.UploadPasswordFile(_token, content);
-            if (!_userModel.hasPasswordManagerFile)
+            try
             {
-                _userModel.hasPasswordManagerFile = true;
+                await RestClient.UploadPasswordFile(_token, content);
+                if (!_userModel.hasPasswordManagerFile)
+                {
+                    _userModel.hasPasswordManagerFile = true;
+                }
+            }
+            catch (InvalidTokenException ex)
+            {
+                await LogoutAsync();
+                throw ex;
             }
         }
 
@@ -284,20 +311,28 @@ namespace PasswordReader.Services
             if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
             var encryptionKey = await GetEncryptionKeyAsync();
             if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
-            var notes = await RestClient.GetNotesAsync(_token);
-            foreach (var note in notes)
+            try
             {
-                try
+                var notes = await RestClient.GetNotesAsync(_token);
+                foreach (var note in notes)
                 {
-                    note.title = DecodeText(note.title, encryptionKey, _userModel.passwordManagerSalt);
+                    try
+                    {
+                        note.title = DecodeText(note.title, encryptionKey, _userModel.passwordManagerSalt);
+                    }
+                    catch
+                    {
+                        note.title = UNKNOWN;
+                    }
+                    ret.Add(note);
                 }
-                catch
-                {
-                    note.title = UNKNOWN;
-                }
-                ret.Add(note);
+                return ret;
             }
-            return ret;
+            catch (InvalidTokenException ex)
+            {
+                await LogoutAsync();
+                throw ex;
+            }
         }
 
         public async Task<Note> GetNoteAsync(long id)
@@ -305,18 +340,26 @@ namespace PasswordReader.Services
             if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
             var encryptionKey = await GetEncryptionKeyAsync();
             if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
-            var note = await RestClient.GetNoteAsync(_token, id);
             try
             {
-                note.title = DecodeText(note.title, encryptionKey, _userModel.passwordManagerSalt);
-                note.content = DecodeText(note.content, encryptionKey, _userModel.passwordManagerSalt);
+                var note = await RestClient.GetNoteAsync(_token, id);
+                try
+                {
+                    note.title = DecodeText(note.title, encryptionKey, _userModel.passwordManagerSalt);
+                    note.content = DecodeText(note.content, encryptionKey, _userModel.passwordManagerSalt);
+                }
+                catch
+                {
+                    note.title = UNKNOWN;
+                    note.content = "";
+                }
+                return note;
             }
-            catch
+            catch (InvalidTokenException ex)
             {
-                note.title = UNKNOWN;
-                note.content = "";
+                await LogoutAsync();
+                throw ex;
             }
-            return note;
         }
 
         public async Task<long> CreateNoteAsync()
@@ -325,14 +368,30 @@ namespace PasswordReader.Services
             var encryptionKey = await GetEncryptionKeyAsync();
             if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
             string encryptedTitle = EncodeText("Neue Notiz", encryptionKey, _userModel.passwordManagerSalt);
-            var noteid = await RestClient.CreateNewNoteAsync(_token, encryptedTitle);
-            return noteid;
+            try
+            {
+                var noteid = await RestClient.CreateNewNoteAsync(_token, encryptedTitle);
+                return noteid;
+            }
+            catch (InvalidTokenException ex)
+            {
+                await LogoutAsync();
+                throw ex;
+            }
         }
 
         public async Task DeleteNoteAsync(long id)
         {
             if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
-            await RestClient.DeleteNoteAsync(_token, id);
+            try
+            {
+                await RestClient.DeleteNoteAsync(_token, id);
+            }
+            catch (InvalidTokenException ex)
+            {
+                await LogoutAsync();
+                throw ex;
+            }
         }
 
         public async Task<DateTime> UpdateNoteAsync(long id, string title, string content)
@@ -342,7 +401,15 @@ namespace PasswordReader.Services
             if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
             var encryptedTitle = EncodeText(title, encryptionKey, _userModel.passwordManagerSalt);
             var encryptedContent = EncodeText(content, encryptionKey, _userModel.passwordManagerSalt);
-            return await RestClient.UpdateNoteAsync(_token, id, encryptedTitle, encryptedContent);
+            try
+            {
+                return await RestClient.UpdateNoteAsync(_token, id, encryptedTitle, encryptedContent);
+            }
+            catch (InvalidTokenException ex)
+            {
+                await LogoutAsync();
+                throw ex;
+            }
         }
 
         public string GetUsername()
