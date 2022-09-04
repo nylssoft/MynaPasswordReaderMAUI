@@ -445,7 +445,7 @@ namespace PasswordReader.Services
             {
                 return $"https://www.stockfleth.eu/{_userModel.photo}";
             }
-            return "";
+            return "https://www.stockfleth.eu/images/skat/profiles/default2.png";
         }
 
         // helpers
