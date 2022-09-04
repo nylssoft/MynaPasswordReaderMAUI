@@ -254,6 +254,10 @@ namespace PasswordReader.Services
             var encrypted = Encrypt(data, encryptionKey, _userModel.passwordManagerSalt);
             var content = JsonSerializer.Serialize(Convert.ToHexString(encrypted));
             await RestClient.UploadPasswordFile(_token, content);
+            if (!_userModel.hasPasswordManagerFile)
+            {
+                _userModel.hasPasswordManagerFile = true;
+            }
         }
 
         public async Task<string> DecodePasswordAsync(string encryptedPassword)
