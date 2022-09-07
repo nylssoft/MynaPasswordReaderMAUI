@@ -7,30 +7,22 @@
         <VerticalStackLayout Margin="20" Spacing="20">
             <VerticalStackLayout>
                 <Label Text="Benutzername:"/>
-                <Border Padding="10,0,10,0" HeightRequest="40">
-                    <Label Text="{Binding Username}" VerticalOptions="Center"/>
-                </Border>
+                <Label Text="{Binding Username}" VerticalOptions="Center"/>
             </VerticalStackLayout>
             <VerticalStackLayout>
                 <Label Text="E-Mail-Adresse:"/>
-                <Border Padding="10,0,10,0" HeightRequest="40">
                     <Label Text="{Binding EmailAddress}" VerticalOptions="Center"/>
-                </Border>
             </VerticalStackLayout>
             <VerticalStackLayout>
                 <Label Text="Profilfoto:"/>
-                <Border HorizontalOptions="Start" StrokeShape="RoundRectangle 50,50,50,50">
-                    <Image Source="{Binding UserPhotoUrl}" WidthRequest="96" HeightRequest="96" HorizontalOptions="Start"/>
-                </Border>
+                <Image Source="{Binding UserPhotoUrl}" WidthRequest="96" HeightRequest="96" HorizontalOptions="Start"/>
             </VerticalStackLayout>
             <VerticalStackLayout>
                 <Label Text="Letzte Anmeldung:"/>
-                <Border Padding="10,0,10,0" HeightRequest="40">
-                    <Label Text="{Binding LastLogin}" VerticalOptions="Center"/>
-                </Border>
+                <Label Text="{Binding LastLogin}" VerticalOptions="Center"/>
             </VerticalStackLayout>
             <VerticalStackLayout Margin="20" Spacing="20">
-                <Button Text="Abmelden" Clicked="Logout_Clicked"  WidthRequest="100" IsEnabled="{Binding CanLogout}"/>
+                <Button Text="Abmelden" Clicked="Logout_Clicked"  WidthRequest="150" IsEnabled="{Binding CanLogout}"/>
                 <ActivityIndicator IsRunning="{Binding IsRunning}"/>
             </VerticalStackLayout>
         </VerticalStackLayout>

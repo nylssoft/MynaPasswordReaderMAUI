@@ -7,14 +7,14 @@
         <VerticalStackLayout Margin="20" Spacing="20">
             <VerticalStackLayout>
                 <Label Text="Schlüssel:" VerticalOptions="Center"/>
-                <Grid RowDefinitions="40" ColumnDefinitions="*,40" ColumnSpacing="10">
+                <Grid RowDefinitions="50" ColumnDefinitions="*,40" ColumnSpacing="10">
                     <Border Padding="10,0,10,0">
                         <Entry x:Name="encryptionKeyEntry" Text="{Binding EncryptionKey}" IsEnabled="{Binding CanChangeEncryptionKey}" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False"/>
                     </Border>
-                    <ImageButton Grid.Column="1" x:Name="showEncryptionKeyButton" Source="{AppThemeBinding Light=eye.png, Dark=eyedark.png}" IsEnabled="{Binding CanChangeEncryptionKey}" Clicked="ShowEncryptionKey_Clicked"/>
+                    <ImageButton Grid.Column="1" x:Name="showEncryptionKeyButton" Source="eyedark.png" IsEnabled="{Binding CanChangeEncryptionKey}" Clicked="ShowEncryptionKey_Clicked"/>
                 </Grid>
             </VerticalStackLayout>
-            <Button x:Name="saveButton" Text="Speichern" Clicked="Save_Clicked" WidthRequest="100" IsEnabled="{Binding CanChangeEncryptionKey}"/>
+            <Button x:Name="saveButton" Text="Speichern" Clicked="Save_Clicked" WidthRequest="150" IsEnabled="{Binding CanChangeEncryptionKey}"/>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

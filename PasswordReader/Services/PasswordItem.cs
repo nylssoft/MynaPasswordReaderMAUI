@@ -46,6 +46,7 @@ namespace PasswordReader.Services
             {
                 if (_imageUrl == null)
                 {
+                    _imageUrl = "eyedark.png";
                     var u = Url;
                     if (!string.IsNullOrEmpty(u))
                     {
@@ -60,7 +61,6 @@ namespace PasswordReader.Services
                         }
                         catch
                         {
-                            _imageUrl = "";
                         }
                     }
                 }

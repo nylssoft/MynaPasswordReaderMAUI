@@ -7,11 +7,11 @@
         <VerticalStackLayout Margin="20" Spacing="20">
             <VerticalStackLayout>
                 <Label Text="Sicherheitscode:"/>
-                <Border Padding="10,0,10,0" HeightRequest="40">
+                <Border Padding="10,0,10,0" HeightRequest="50">
                     <Entry Text="{Binding SecurityCode}" IsEnabled="{Binding CanConfirmSecurityCode}" Keyboard="Numeric" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False"/>
                 </Border>
             </VerticalStackLayout>
-            <Button Text="Bestätigen" Clicked="Confirm_Clicked" WidthRequest="100" IsEnabled="{Binding CanConfirmSecurityCode}"/>
+            <Button Text="Bestätigen" Clicked="Confirm_Clicked" WidthRequest="150" IsEnabled="{Binding CanConfirmSecurityCode}"/>
             <ActivityIndicator IsRunning="{Binding IsRunning}"/>
         </VerticalStackLayout>
     </ScrollView>

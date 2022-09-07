@@ -76,7 +76,7 @@ public partial class PasswordListPage : ContentPage
         }
     }
 
-    private async void ListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+    private async void CollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!_model.IsLoggedIn)
         {
@@ -116,7 +116,8 @@ public partial class PasswordListPage : ContentPage
             Description = "",
             Login = "",
             Password = "",
-            Url = ""
+            Url = "",
+            ImageUrl = "eyedark.png"
         };
         int pos = 0;
         foreach (var previtem in _model.PasswordItems)

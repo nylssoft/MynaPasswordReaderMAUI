@@ -7,17 +7,17 @@
         <VerticalStackLayout Margin="20" Spacing="20">
             <VerticalStackLayout>
                 <Label Text="Benutzername:"/>
-                <Border Padding="10,0,10,0" HeightRequest="40">
+                <Border Padding="10,0,10,0" HeightRequest="50">
                     <Entry Text="{Binding Username}" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" IsEnabled="{Binding CanLogin}" Completed="Username_Completed"/>
                 </Border>
             </VerticalStackLayout>
             <VerticalStackLayout>
                 <Label Text="Kennwort:"/>
-                <Border Padding="10,0,10,0" HeightRequest="40">
+                <Border Padding="10,0,10,0" HeightRequest="50">
                     <Entry x:Name="entryPassword" Text="{Binding Password}" IsPassword="True" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" IsEnabled="{Binding CanLogin}"/>
                 </Border>
             </VerticalStackLayout>
-            <Button Text="Anmelden" Clicked="Login_Clicked" WidthRequest="100" IsEnabled="{Binding CanLogin}"/>
+            <Button Text="Anmelden" Clicked="Login_Clicked" WidthRequest="150" IsEnabled="{Binding CanLogin}"/>
             <Button Text="Anmelden mit Langzeit-Token" Clicked="LoginToken_Clicked" WidthRequest="300" IsVisible="{Binding HasLoginToken}" IsEnabled="{Binding CanLogin}"/>
             <ActivityIndicator IsRunning="{Binding IsRunning}"/>
         </VerticalStackLayout>

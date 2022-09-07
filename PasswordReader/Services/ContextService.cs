@@ -434,7 +434,7 @@ namespace PasswordReader.Services
         {
             if (_loggedIn && _userModel.lastLoginUtc.HasValue)
             {
-                return _userModel.lastLoginUtc.Value.ToLocalTime().ToString("f", new CultureInfo("de-DE"));
+                return _userModel.lastLoginUtc.Value.ToLocalTime().ToString("g", new CultureInfo("de-DE"));
             }
             return "";
         }
@@ -445,7 +445,7 @@ namespace PasswordReader.Services
             {
                 return $"https://www.stockfleth.eu/{_userModel.photo}";
             }
-            return "https://www.stockfleth.eu/images/skat/profiles/default2.png";
+            return "eyedark.png";
         }
 
         // helpers

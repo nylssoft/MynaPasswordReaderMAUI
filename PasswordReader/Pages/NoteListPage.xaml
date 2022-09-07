@@ -4,16 +4,18 @@
              x:Class="PasswordReader.Pages.NoteListPage"
              Title="Notizen">
     <ScrollView>
-        <Grid RowDefinitions="*,Auto,Auto" Margin="20" RowSpacing="10">
+        <Grid RowDefinitions="*,Auto" Margin="20" RowSpacing="10">
             <FlexLayout BindableLayout.ItemsSource="{Binding NoteItems}" Wrap="Wrap" AlignContent="Start">
                 <BindableLayout.ItemTemplate>
                     <DataTemplate>
-                        <Button Text="{Binding Title}" HeightRequest="40" Clicked="NoteItem_Clicked" Margin="2"/>
+                        <Button Text="{Binding Title}" HeightRequest="50" Clicked="NoteItem_Clicked" Margin="2"/>
                     </DataTemplate>
                 </BindableLayout.ItemTemplate>
             </FlexLayout>
-            <Button Grid.Row="1" Text="Neue Notiz anlegen" Clicked="NewNoteItem_Clicked" WidthRequest="200" IsEnabled="{Binding CanCreateNote}"/>
-            <ActivityIndicator Grid.Row="2" IsRunning="{Binding IsRunning}"/>
+            <HorizontalStackLayout Grid.Row="1" Spacing="10" HorizontalOptions="Center">
+                <Button Text="Neue Notiz anlegen" Clicked="NewNoteItem_Clicked" WidthRequest="200" IsEnabled="{Binding CanCreateNote}"/>
+                <ActivityIndicator IsRunning="{Binding IsRunning}"/>
+            </HorizontalStackLayout>
         </Grid>
     </ScrollView>
 </ContentPage>

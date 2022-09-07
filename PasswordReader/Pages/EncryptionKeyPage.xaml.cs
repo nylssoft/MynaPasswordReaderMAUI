@@ -44,7 +44,7 @@ public partial class EncryptionKeyPage : ContentPage
             _model.EncryptionKey = HIDDEN;
         }
         encryptionKeyEntry.IsPassword = true;
-        showEncryptionKeyButton.Source = App.IsLightAppTheme ? "eye.png" : "eyedark.png";
+        showEncryptionKeyButton.Source = "eyedark.png";
     }
 
     private void ShowEncryptionKey_Clicked(object sender, EventArgs e)
@@ -56,7 +56,7 @@ public partial class EncryptionKeyPage : ContentPage
                 _model.EncryptionKey = _savedEncryptionKey;
             }
             encryptionKeyEntry.IsPassword = false;
-            showEncryptionKeyButton.Source = App.IsLightAppTheme ? "eyeslash.png" : "eyeslashdark.png";
+            showEncryptionKeyButton.Source = "eyeslashdark.png";
         }
         else
         {
@@ -66,7 +66,7 @@ public partial class EncryptionKeyPage : ContentPage
                 _model.EncryptionKey = HIDDEN;
             }
             encryptionKeyEntry.IsPassword = true;
-            showEncryptionKeyButton.Source = App.IsLightAppTheme ? "eye.png" : "eyedark.png";
+            showEncryptionKeyButton.Source = "eyedark.png";
         }
     }
 

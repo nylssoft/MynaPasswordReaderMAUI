@@ -141,7 +141,7 @@ public partial class NoteItemPage : ContentPage
         {
             _model.IsRunning = true;
             var lastModifiedUtc = await App.ContextService.UpdateNoteAsync(_model.Id, _model.Title, _model.Content);
-            _model.LastModified = lastModifiedUtc.ToLocalTime().ToString("f", new CultureInfo("de-DE"));
+            _model.LastModified = lastModifiedUtc.ToLocalTime().ToString("g", new CultureInfo("de-DE"));
             _model.Changed = false;
             App.ContextService.NoteChanged = false;
             foreach (var noteitem in App.ContextViewModel.NoteItems)

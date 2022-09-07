@@ -166,7 +166,7 @@ public partial class PasswordItemPage : ContentPage
                     _model.Password = pwd;
                 }
                 SetStatusMessage("Kennwort angezeigt.");
-                showPasswordButton.Source = App.IsLightAppTheme ? "eyeslash.png" : "eyeslashdark.png";
+                showPasswordButton.Source = "eyeslashdark.png";
                 passwordEntry.IsPassword = false;
             }
             else
@@ -177,7 +177,7 @@ public partial class PasswordItemPage : ContentPage
                     _model.Password = HIDDEN;
                 }
                 SetStatusMessage("Kennwort verborgen.");
-                showPasswordButton.Source = App.IsLightAppTheme ? "eye.png" : "eyedark.png";
+                showPasswordButton.Source = "eyedark.png";
                 passwordEntry.IsPassword = true;
             }
         }
