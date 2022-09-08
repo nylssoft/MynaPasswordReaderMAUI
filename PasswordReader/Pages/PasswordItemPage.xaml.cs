@@ -222,7 +222,7 @@ public partial class PasswordItemPage : ContentPage
         try
         {
             await App.ContextViewModel.UploadPasswordItemsAsync();
-            if (urlChanged && !string.IsNullOrEmpty(_item.Url))
+            if (urlChanged)
             {
                 // fetch image url again
                 PasswordItem p = new();

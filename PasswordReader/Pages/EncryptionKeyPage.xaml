@@ -4,7 +4,7 @@
              x:Class="PasswordReader.Pages.EncryptionKeyPage"
              Title="Schlüssel">
     <ScrollView>
-        <VerticalStackLayout Margin="20" Spacing="20">
+        <VerticalStackLayout Margin="20,0,20,0" Spacing="20">
             <VerticalStackLayout>
                 <Label Text="Schlüssel:" VerticalOptions="Center"/>
                 <Grid RowDefinitions="50" ColumnDefinitions="*,40" ColumnSpacing="10">

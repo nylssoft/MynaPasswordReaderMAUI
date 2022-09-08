@@ -4,7 +4,7 @@
              x:Class="PasswordReader.Pages.ProfilePage"
              Title="Profil">
     <ScrollView>
-        <VerticalStackLayout Margin="20" Spacing="20">
+        <VerticalStackLayout Margin="20,0,20,0" Spacing="20">
             <VerticalStackLayout>
                 <Label Text="Benutzername:"/>
                 <Label Text="{Binding Username}" VerticalOptions="Center"/>

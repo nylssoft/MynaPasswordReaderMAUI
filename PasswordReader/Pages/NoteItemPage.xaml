@@ -4,7 +4,7 @@
              x:Class="PasswordReader.Pages.NoteItemPage"
              Title="Notiz">
     <ScrollView>
-        <Grid RowDefinitions="Auto,Auto,Auto,*,Auto,Auto" Margin="20" RowSpacing="10">
+        <Grid RowDefinitions="Auto,Auto,Auto,*,Auto,Auto" Margin="20,0,20,0" RowSpacing="10">
             <HorizontalStackLayout Spacing="10">
                 <Button Text="Speichern" WidthRequest="150" Clicked="SaveNote_Clicked" IsEnabled="{Binding CanSaveNote}"/>
                 <Button Text="Löschen" WidthRequest="150" Clicked="DeleteNote_Clicked" IsEnabled="{Binding CanDeleteNote}"/>

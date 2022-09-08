@@ -4,7 +4,7 @@
              x:Class="PasswordReader.Pages.AboutPage"
              Title="Über">
     <ScrollView>
-        <VerticalStackLayout Margin="20" Spacing="20">
+        <VerticalStackLayout Margin="20,0,20,0" Spacing="20">
             <Label  Text="Myna Password Reader MAUI" VerticalOptions="Center" HorizontalOptions="Center" FontSize="Large"/>
             <Label  Text="Copyright 2022 Niels Stockfleth" VerticalOptions="Center" HorizontalOptions="Center" FontSize="Medium"/>
             <Label  Text="www.stockfleth.eu" VerticalOptions="Center" HorizontalOptions="Center"/>
