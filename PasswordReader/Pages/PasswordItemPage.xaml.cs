@@ -115,6 +115,32 @@ public partial class PasswordItemPage : ContentPage
         await Shell.Current.GoToAsync("..");
     }
 
+    private async void OpenUrl_Clicked(object sender, EventArgs e)
+    {
+        string url = _model.Url;
+        if (!string.IsNullOrEmpty(url))
+        {
+            string pattern = @"^https?://";
+            var m = System.Text.RegularExpressions.Regex.Match(_model.Url, pattern);
+            if (!m.Success)
+            {
+                url = $"https://{url}";
+            }
+            try
+            {
+                var opened = await Browser.OpenAsync(url, BrowserLaunchMode.External);
+                if (!opened)
+                {
+                    await DisplayAlert("Fehler", $"Die URL '{url}' kann nicht geöffnet werden.", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Fehler", ex.Message, "OK");
+            }
+        }
+    }
+
     private async void CopyUrl_Clicked(object sender, EventArgs e)
     {
         await CopyToClipboard(_model.Url, "URL");

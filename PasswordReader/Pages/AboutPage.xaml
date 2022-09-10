@@ -5,9 +5,16 @@
              Title="Über">
     <ScrollView>
         <VerticalStackLayout Margin="20,0,20,0" Spacing="20">
-            <Label  Text="Myna Password Reader MAUI" VerticalOptions="Center" HorizontalOptions="Center" FontSize="Large"/>
-            <Label  Text="Copyright 2022 Niels Stockfleth" VerticalOptions="Center" HorizontalOptions="Center" FontSize="Medium"/>
-            <Label  Text="www.stockfleth.eu" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Label Text="Myna Password Reader MAUI" VerticalOptions="Center" HorizontalOptions="Center" FontSize="Large"/>
+            <Label Text="Copyright 2022 Niels Stockfleth" VerticalOptions="Center" HorizontalOptions="Center" FontSize="Medium"/>
+            <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                <Label  Text="www.stockfleth.eu" VerticalOptions="Center"/>
+                <Image Source="opendark.png" WidthRequest="32" HeightRequest="32">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTapGestureRecognizerTapped"/>
+                    </Image.GestureRecognizers>
+                </Image>
+            </HorizontalStackLayout>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

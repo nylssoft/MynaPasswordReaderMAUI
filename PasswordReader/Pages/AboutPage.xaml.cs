@@ -23,4 +23,21 @@ public partial class AboutPage : ContentPage
 	{
 		InitializeComponent();
     }
+
+    async void OnTapGestureRecognizerTapped(object sender, EventArgs args)
+    {
+        try
+        {
+            string url = "https://www.stockfleth.eu";
+            var opened = await Browser.OpenAsync(url, BrowserLaunchMode.External);
+            if (!opened)
+            {
+                await DisplayAlert("Fehler", $"Die URL '{url}' kann nicht geöffnet werden.", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Fehler", ex.Message, "OK");
+        }
+    }
 }
