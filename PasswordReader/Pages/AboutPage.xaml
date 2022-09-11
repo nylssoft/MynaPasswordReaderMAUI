@@ -15,6 +15,7 @@
                     </Image.GestureRecognizers>
                 </Image>
             </HorizontalStackLayout>
+            <Label Text="{Binding DisplayAppVersion}" VerticalOptions="Center" HorizontalOptions="Center" StyleClass="StatusMessageLabelStyle"/>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

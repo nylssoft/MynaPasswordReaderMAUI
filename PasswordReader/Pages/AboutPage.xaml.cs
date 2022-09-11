@@ -22,9 +22,19 @@ public partial class AboutPage : ContentPage
     public AboutPage()
 	{
 		InitializeComponent();
+        BindingContext = this;
     }
 
-    async void OnTapGestureRecognizerTapped(object sender, EventArgs args)
+
+    public string DisplayAppVersion
+    {
+        get
+        {
+            return $"Version {AppInfo.Current.VersionString} Build {AppInfo.Current.BuildString}";
+        }
+    }
+
+    private async void OnTapGestureRecognizerTapped(object sender, EventArgs args)
     {
         try
         {
