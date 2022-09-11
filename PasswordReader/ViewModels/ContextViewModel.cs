@@ -230,9 +230,9 @@ namespace PasswordReader.ViewModels
 
         public bool CanLogout => _isLoggedIn || _requires2FA;
 
-        public bool CanCreateNote => _isLoggedIn && !string.IsNullOrEmpty(_encryptionKey) && !_isRunning;
+        public bool CanCreateNote => _isLoggedIn && !string.IsNullOrEmpty(_encryptionKey) && !_isRunning && string.IsNullOrEmpty(_errorMessage);
 
-        public bool CanCreatePassword => _isLoggedIn && !string.IsNullOrEmpty(_encryptionKey) && !_isRunning;
+        public bool CanCreatePassword => _isLoggedIn && !string.IsNullOrEmpty(_encryptionKey) && !_isRunning && string.IsNullOrEmpty(_errorMessage);
 
         private bool _isRunning;
         public bool IsRunning
@@ -250,6 +250,23 @@ namespace PasswordReader.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreatePassword)));
             }
         }
+
+        private string _errorMessage;
+        public string ErrorMessage
+        {
+            get => _errorMessage;
+            set
+            {
+                if (_errorMessage == value) return;
+                _errorMessage = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ErrorMessage)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasErrorMessage)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreateNote)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreatePassword)));
+            }
+        }
+
+        public bool HasErrorMessage => !string.IsNullOrEmpty(_errorMessage);
 
         public async Task UploadPasswordItemsAsync()
         {

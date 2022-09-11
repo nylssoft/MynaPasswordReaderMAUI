@@ -27,6 +27,10 @@
                 <Setter Property="FontSize" Value="14" />
                 <Setter Property="TextColor" Value="LightGreen" />
             </Style>
+            <Style TargetType="Label" Class="ErrorMessageLabelStyle">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="TextColor" Value="Red" />
+            </Style>
             <Style TargetType="Button">
                 <Setter Property="TextColor" Value="White" />
                 <Setter Property="BackgroundColor" Value="Blue" />

@@ -47,12 +47,12 @@ public partial class NoteListPage : ContentPage
     {
         if (!_model.IsLoggedIn)
         {
-            await DisplayAlert("Fehler", "Du bist nicht mehr angemeldet.", "OK");
+            _model.ErrorMessage = "Du bist nicht mehr angemeldet.";
             return;
         }
         try
         {
-            if (_model.NoteItems == null)
+            if (_model.NoteItems == null || _model.HasErrorMessage)
             {
                 _model.IsRunning = true;
                 _model.NoteItems = new ObservableCollection<NoteItemViewModel>();
@@ -66,17 +66,22 @@ public partial class NoteListPage : ContentPage
                     });
                 }
                 _model.IsRunning = false;
+                _model.ErrorMessage = "";
             }
         }
         catch (Exception ex)
         {
             _model.IsRunning = false;
-            await DisplayAlert("Fehler", ex.Message, "OK");
+            _model.ErrorMessage = ex.Message;
         }
     }
 
     private async void NoteItem_Clicked(object sender, EventArgs e)
     {
+        if (_model.HasErrorMessage)
+        {
+            return;
+        }
         if (!_model.IsLoggedIn)
         {
             await DisplayAlert("Fehler", "Du bist nicht mehr angemeldet.", "OK");
@@ -111,6 +116,10 @@ public partial class NoteListPage : ContentPage
 
     private async void NewNoteItem_Clicked(object sender, EventArgs e)
     {
+        if (_model.HasErrorMessage)
+        {
+            return;
+        }
         if (!_model.IsLoggedIn)
         {
             await DisplayAlert("Fehler", "Du bist nicht mehr angemeldet.", "OK");

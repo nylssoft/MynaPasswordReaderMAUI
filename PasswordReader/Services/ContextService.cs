@@ -42,8 +42,6 @@ namespace PasswordReader.Services
 
         private bool _passwordChanged = false;
 
-        private const string UNKNOWN = "???????";
-
         public bool NoteChanged { get => _noteChanged; set => _noteChanged = value; }
 
         public bool PasswordChanged { get => _passwordChanged; set => _passwordChanged = value; }
@@ -316,14 +314,7 @@ namespace PasswordReader.Services
                 var notes = await RestClient.GetNotesAsync(_token);
                 foreach (var note in notes)
                 {
-                    try
-                    {
-                        note.title = DecodeText(note.title, encryptionKey, _userModel.passwordManagerSalt);
-                    }
-                    catch
-                    {
-                        note.title = UNKNOWN;
-                    }
+                    note.title = DecodeText(note.title, encryptionKey, _userModel.passwordManagerSalt);
                     ret.Add(note);
                 }
                 return ret;
@@ -343,16 +334,8 @@ namespace PasswordReader.Services
             try
             {
                 var note = await RestClient.GetNoteAsync(_token, id);
-                try
-                {
-                    note.title = DecodeText(note.title, encryptionKey, _userModel.passwordManagerSalt);
-                    note.content = DecodeText(note.content, encryptionKey, _userModel.passwordManagerSalt);
-                }
-                catch
-                {
-                    note.title = UNKNOWN;
-                    note.content = "";
-                }
+                note.title = DecodeText(note.title, encryptionKey, _userModel.passwordManagerSalt);
+                note.content = DecodeText(note.content, encryptionKey, _userModel.passwordManagerSalt);
                 return note;
             }
             catch (InvalidTokenException ex)

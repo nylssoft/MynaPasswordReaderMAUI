@@ -34,7 +34,7 @@ public partial class PasswordListPage : ContentPage
     protected async override void OnAppearing()
     {
         base.OnAppearing();
-        if (_model.PasswordItems == null)
+        if (_model.PasswordItems == null || _model.HasErrorMessage)
         {
             _model.PasswordItems = new ObservableCollection<PasswordItemViewModel>();
             if (App.ContextService.HasPasswordItems())
@@ -48,7 +48,7 @@ public partial class PasswordListPage : ContentPage
     {
         if (!_model.IsLoggedIn)
         {
-            await DisplayAlert("Fehler", "Du bist nicht mehr angemeldet.", "OK");
+            _model.ErrorMessage = "Du bist nicht mehr angemeldet.";
             return;
         }
         try
@@ -68,16 +68,21 @@ public partial class PasswordListPage : ContentPage
                 });
             }
             _model.IsRunning = false;
+            _model.ErrorMessage = "";
         }
         catch (Exception ex)
         {
             _model.IsRunning = false;
-            await DisplayAlert("Fehler", ex.Message, "OK");
+            _model.ErrorMessage = ex.Message;
         }
     }
 
     private async void CollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        if (_model.HasErrorMessage)
+        {
+            return;
+        }
         if (!_model.IsLoggedIn)
         {
             await DisplayAlert("Fehler", "Du bist nicht mehr angemeldet.", "OK");
@@ -104,6 +109,10 @@ public partial class PasswordListPage : ContentPage
 
     private async void NewPassword_Clicked(object sender, EventArgs e)
     {
+        if (_model.HasErrorMessage)
+        {
+            return;
+        }
         if (!_model.IsLoggedIn)
         {
             await DisplayAlert("Fehler", "Du bist nicht mehr angemeldet.", "OK");
