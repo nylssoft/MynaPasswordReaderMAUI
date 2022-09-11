@@ -20,6 +20,14 @@
             <Button Text="Anmelden" Clicked="Login_Clicked" WidthRequest="150" IsEnabled="{Binding CanLogin}"/>
             <Button Text="Anmelden mit Langzeit-Token" Clicked="LoginToken_Clicked" WidthRequest="300" IsVisible="{Binding HasLoginToken}" IsEnabled="{Binding CanLogin}"/>
             <ActivityIndicator IsRunning="{Binding IsRunning}"/>
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="10">
+                <Label Text="Noch nicht registriert?" VerticalOptions="Center"/>
+                <Image Source="opendark.png" WidthRequest="32" HeightRequest="32">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTapGestureRecognizerTapped"/>
+                    </Image.GestureRecognizers>
+                </Image>
+            </HorizontalStackLayout>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
