@@ -34,19 +34,9 @@
                 <Setter Property="FontSize" Value="18"/>
                 <Setter Property="CornerRadius" Value="8"/>
                 <Setter Property="Padding" Value="14,10"/>
-                <Setter Property="VisualStateManager.VisualStateGroups">
-                    <VisualStateGroupList>
-                        <VisualStateGroup x:Name="CommonStates">
-                            <VisualState x:Name="Normal" />
-                            <VisualState x:Name="Disabled">
-                                <VisualState.Setters>
-                                    <Setter Property="TextColor" Value="LightGray" />
-                                    <Setter Property="BackgroundColor" Value="Gray" />
-                                </VisualState.Setters>
-                            </VisualState>
-                        </VisualStateGroup>
-                    </VisualStateGroupList>
-                </Setter>
+            </Style>
+            <Style TargetType="ImageButton">
+                <Setter Property="BackgroundColor" Value="Transparent" />
             </Style>
             <Style TargetType="Editor">
                 <Setter Property="TextColor" Value="Black" />
