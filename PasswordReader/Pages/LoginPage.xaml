@@ -17,8 +17,8 @@
                     <Entry x:Name="entryPassword" Text="{Binding Password}" IsPassword="True" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" IsEnabled="{Binding CanLogin}"/>
                 </Border>
             </VerticalStackLayout>
-            <Button Text="Anmelden" Clicked="Login_Clicked" WidthRequest="150" IsEnabled="{Binding CanLogin}"/>
-            <Button Text="Anmelden mit Langzeit-Token" Clicked="LoginToken_Clicked" WidthRequest="300" IsVisible="{Binding HasLoginToken}" IsEnabled="{Binding CanLogin}"/>
+            <Button Text="Anmelden" Clicked="Login_Clicked" WidthRequest="150" IsVisible="{Binding CanLogin}" IsEnabled="{Binding CanLogin}"/>
+            <Button Text="Anmelden mit Langzeit-Token" Clicked="LoginToken_Clicked" WidthRequest="300" IsVisible="{Binding CanLoginWithToken}" IsEnabled="{Binding CanLoginWithToken}"/>
             <ActivityIndicator IsRunning="{Binding IsRunning}"/>
             <HorizontalStackLayout HorizontalOptions="Center" Spacing="10">
                 <Label Text="Noch nicht registriert?" VerticalOptions="Center"/>

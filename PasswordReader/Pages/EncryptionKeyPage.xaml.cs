@@ -15,6 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+using APIServer.PasswordGenerator;
 using PasswordReader.ViewModels;
 
 namespace PasswordReader.Pages;
@@ -97,4 +98,27 @@ public partial class EncryptionKeyPage : ContentPage
             await DisplayAlert("Fehler", ex.Message, "OK");
         }
     }
+
+    private async void Generate_Clicked(object sender, EventArgs e)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(_model.EncryptionKey))
+            {
+                var pwdgen = new PwdGen { Length = 24 };
+                _model.EncryptionKey = pwdgen.Generate();
+                _savedEncryptionKey = _model.EncryptionKey;
+                if (encryptionKeyEntry.IsPassword)
+                {
+                    encryptionKeyEntry.IsPassword = false;
+                    showEncryptionKeyButton.Source = "eyeslashdark.png";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Fehler", ex.Message, "OK");
+        }
+    }
+
 }

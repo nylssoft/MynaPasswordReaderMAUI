@@ -14,7 +14,7 @@
                 </BindableLayout.ItemTemplate>
             </FlexLayout>
             <HorizontalStackLayout Grid.Row="2" Spacing="10" HorizontalOptions="Center">
-                <Button Text="Neue Notiz anlegen" Clicked="NewNoteItem_Clicked" WidthRequest="200" IsEnabled="{Binding CanCreateNote}"/>
+                <Button Text="Neue Notiz anlegen" Clicked="NewNoteItem_Clicked" WidthRequest="200" IsVisible="{Binding CanCreateNote}" IsEnabled="{Binding CanCreateNote}"/>
                 <ActivityIndicator IsRunning="{Binding IsRunning}"/>
             </HorizontalStackLayout>
         </Grid>

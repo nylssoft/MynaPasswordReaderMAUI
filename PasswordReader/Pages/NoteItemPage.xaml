@@ -6,8 +6,8 @@
     <ScrollView>
         <Grid RowDefinitions="Auto,Auto,Auto,*,Auto,Auto" Margin="20,0,20,0" RowSpacing="10">
             <HorizontalStackLayout Spacing="10">
-                <Button Text="Speichern" WidthRequest="150" Clicked="SaveNote_Clicked" IsEnabled="{Binding CanSaveNote}"/>
-                <Button Text="Löschen" WidthRequest="150" Clicked="DeleteNote_Clicked" IsEnabled="{Binding CanDeleteNote}"/>
+                <Button Text="Speichern" WidthRequest="150" Clicked="SaveNote_Clicked" IsVisible="{Binding CanSaveNote}" IsEnabled="{Binding CanSaveNote}"/>
+                <Button Text="Löschen" WidthRequest="150" Clicked="DeleteNote_Clicked" IsVisible="{Binding CanDeleteNote}" IsEnabled="{Binding CanDeleteNote}"/>
                 <ActivityIndicator IsRunning="{Binding IsRunning}"/>
             </HorizontalStackLayout>
             <VerticalStackLayout Grid.Row="1">

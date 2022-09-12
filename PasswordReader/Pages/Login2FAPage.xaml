@@ -11,7 +11,7 @@
                     <Entry Text="{Binding SecurityCode}" IsEnabled="{Binding CanConfirmSecurityCode}" Keyboard="Numeric" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False"/>
                 </Border>
             </VerticalStackLayout>
-            <Button Text="Bestätigen" Clicked="Confirm_Clicked" WidthRequest="150" IsEnabled="{Binding CanConfirmSecurityCode}"/>
+            <Button Text="Bestätigen" Clicked="Confirm_Clicked" WidthRequest="150" IsVisible="{Binding CanConfirmSecurityCode}" IsEnabled="{Binding CanConfirmSecurityCode}"/>
             <ActivityIndicator IsRunning="{Binding IsRunning}"/>
         </VerticalStackLayout>
     </ScrollView>

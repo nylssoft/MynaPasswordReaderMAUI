@@ -22,7 +22,7 @@
                 <Label Text="{Binding LastLogin}" VerticalOptions="Center"/>
             </VerticalStackLayout>
             <VerticalStackLayout Margin="20" Spacing="20">
-                <Button Text="Abmelden" Clicked="Logout_Clicked"  WidthRequest="150" IsEnabled="{Binding CanLogout}"/>
+                <Button Text="Abmelden" Clicked="Logout_Clicked"  WidthRequest="150" IsVisible="{Binding CanLogout}" IsEnabled="{Binding CanLogout}"/>
                 <ActivityIndicator IsRunning="{Binding IsRunning}"/>
             </VerticalStackLayout>
         </VerticalStackLayout>

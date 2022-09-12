@@ -14,7 +14,9 @@
                     <ImageButton Grid.Column="1" x:Name="showEncryptionKeyButton" Source="eyedark.png" IsEnabled="{Binding CanChangeEncryptionKey}" Clicked="ShowEncryptionKey_Clicked"/>
                 </Grid>
             </VerticalStackLayout>
-            <Button x:Name="saveButton" Text="Speichern" Clicked="Save_Clicked" WidthRequest="150" IsEnabled="{Binding CanChangeEncryptionKey}"/>
+            <Button Text="Speichern" Clicked="Save_Clicked" WidthRequest="150" IsVisible="{Binding CanSaveEncryptionKey}" IsEnabled="{Binding CanSaveEncryptionKey}"/>
+            <Button Text="Generieren" Clicked="Generate_Clicked" WidthRequest="150" IsVisible="{Binding CanGenerateEncryptionKey}" IsEnabled="{Binding CanGenerateEncryptionKey}"/>
+            <Label Text="Notiere den Schlüssel und speichere ihn zusätzlich an einem sicheren Ort. Wenn er verloren geht, können die Daten nicht wiederhergestellt werden." LineBreakMode="WordWrap" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

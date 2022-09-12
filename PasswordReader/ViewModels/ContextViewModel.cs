@@ -79,6 +79,8 @@ namespace PasswordReader.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EncryptionKey)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreateNote)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreatePassword)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanSaveEncryptionKey)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanGenerateEncryptionKey)));
             }
         }
 
@@ -103,6 +105,7 @@ namespace PasswordReader.ViewModels
                 if (_hasLoginToken == value) return;
                 _hasLoginToken = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasLoginToken)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLoginWithToken)));
             }
         }
 
@@ -116,8 +119,11 @@ namespace PasswordReader.ViewModels
                 _isLoggedIn = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsLoggedIn)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLogin)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLoginWithToken)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLogout)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanChangeEncryptionKey)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanSaveEncryptionKey)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanGenerateEncryptionKey)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreateNote)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreatePassword)));
             }
@@ -133,6 +139,7 @@ namespace PasswordReader.ViewModels
                 _requires2FA = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Requires2FA)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLogin)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLoginWithToken)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLogout)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanConfirmSecurityCode)));
             }
@@ -224,6 +231,8 @@ namespace PasswordReader.ViewModels
 
         public bool CanLogin => !_isLoggedIn && !_requires2FA && !_isRunning;
 
+        public bool CanLoginWithToken => CanLogin && HasLoginToken;
+
         public bool CanConfirmSecurityCode => _requires2FA && !_isRunning;
 
         public bool CanChangeEncryptionKey => _isLoggedIn;
@@ -233,6 +242,10 @@ namespace PasswordReader.ViewModels
         public bool CanCreateNote => _isLoggedIn && !string.IsNullOrEmpty(_encryptionKey) && !_isRunning && string.IsNullOrEmpty(_errorMessage);
 
         public bool CanCreatePassword => _isLoggedIn && !string.IsNullOrEmpty(_encryptionKey) && !_isRunning && string.IsNullOrEmpty(_errorMessage);
+
+        public bool CanSaveEncryptionKey => CanChangeEncryptionKey && !string.IsNullOrEmpty(_encryptionKey);
+
+        public bool CanGenerateEncryptionKey => CanChangeEncryptionKey && string.IsNullOrEmpty(_encryptionKey);
 
         private bool _isRunning;
         public bool IsRunning
@@ -244,6 +257,7 @@ namespace PasswordReader.ViewModels
                 _isRunning = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsRunning)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLogin)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLoginWithToken)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLogout)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanConfirmSecurityCode)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreateNote)));
