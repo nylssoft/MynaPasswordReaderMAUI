@@ -1,6 +1,6 @@
 # MynaPasswordReaderMAUI
-Example project for Microsoft MAUI framework.
+Example project for a mobile application using Microsoft MAUI framework.
 
-Reads passwords published on stockfleth.eu with MynaPasswordManager.
+Manage passwords and notes for the portal stockfleth.eu.
 
 The application is currently only available in german.
