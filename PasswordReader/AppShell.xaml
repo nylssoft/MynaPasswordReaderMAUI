@@ -33,6 +33,11 @@
         Route="notelist"/>
 
     <ShellContent
+        Title="Tagebuch"
+        ContentTemplate="{DataTemplate page:DiaryPage}"
+        Route="diary"/>
+
+    <ShellContent
         Title="Profil"
         ContentTemplate="{DataTemplate page:ProfilePage}"
         Route="profile"/>

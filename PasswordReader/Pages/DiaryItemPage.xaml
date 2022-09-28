@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PasswordReader.Pages.DiaryItemPage"
+             Title="Tagebucheintrag">
+    <ScrollView>
+        <Grid RowDefinitions="Auto,Auto,*,Auto,Auto" Margin="20,0,20,0" RowSpacing="10" HorizontalOptions="FillAndExpand">
+            <HorizontalStackLayout Spacing="10">
+                <Button Text="Speichern" WidthRequest="150" Clicked="Save_Clicked" IsVisible="{Binding CanSaveDiary}" IsEnabled="{Binding CanSaveDiary}"/>
+                <Button Text="Löschen" WidthRequest="150" Clicked="Delete_Clicked" IsVisible="{Binding CanDeleteDiary}" IsEnabled="{Binding CanDeleteDiary}"/>
+                <ActivityIndicator IsRunning="{Binding IsRunning}" IsVisible="{Binding IsRunning}"/>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout Grid.Row="1">
+                <Label Text="Eintrag vom" Margin="0,0,5,0"/>
+                <Label Text="{Binding DisplayDate}"/>
+            </HorizontalStackLayout>
+            <Border Grid.Row="2" Padding="10,0,10,0">
+                <Editor AutoSize="TextChanges" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" Text="{Binding Entry}" TextChanged="Diary_Changed"/>
+            </Border>
+            <Label Grid.Row="3" Text="{Binding StatusMessage}" StyleClass="StatusMessageLabelStyle" IsVisible="{Binding HasStatusMessage}"/>
+            <Button Text="Zurück" Grid.Row="4" WidthRequest="100" HorizontalOptions="Center" Clicked="Back_Clicked" Margin="0,0,0,20"/>
+        </Grid>
+    </ScrollView>
+</ContentPage>

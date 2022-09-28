@@ -42,9 +42,13 @@ namespace PasswordReader.Services
 
         private bool _passwordChanged = false;
 
+        private bool _diaryChanged = false;
+
         public bool NoteChanged { get => _noteChanged; set => _noteChanged = value; }
 
         public bool PasswordChanged { get => _passwordChanged; set => _passwordChanged = value; }
+
+        public bool DiaryChanged { get => _diaryChanged; set => _diaryChanged = value; }
 
         private async Task InitAsync()
         {
@@ -164,6 +168,7 @@ namespace PasswordReader.Services
             _encryptionKey = null;
             NoteChanged = false;
             PasswordChanged = false;
+            DiaryChanged = false;
             SecureStorage.Default.Remove("lltoken");
             await App.ContextViewModel.InitAsync();
         }
@@ -272,7 +277,7 @@ namespace PasswordReader.Services
             var content = JsonSerializer.Serialize(Convert.ToHexString(encrypted));
             try
             {
-                await RestClient.UploadPasswordFile(_token, content);
+                await RestClient.UploadPasswordFileAsync(_token, content);
                 if (!_userModel.hasPasswordManagerFile)
                 {
                     _userModel.hasPasswordManagerFile = true;
@@ -387,6 +392,59 @@ namespace PasswordReader.Services
             try
             {
                 return await RestClient.UpdateNoteAsync(_token, id, encryptedTitle, encryptedContent);
+            }
+            catch (InvalidTokenException ex)
+            {
+                await LogoutAsync();
+                throw ex;
+            }
+        }
+
+        public async Task<List<int>> GetDiaryDaysAsync(int year, int month)
+        {
+            if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
+            try
+            {
+                return await RestClient.GetDiaryDaysAsync(_token, year, month);
+            }
+            catch (InvalidTokenException ex)
+            {
+                await LogoutAsync();
+                throw ex;
+            }
+        }
+
+        public async Task<Diary> GetDiaryAsync(int year, int month, int day)
+        {
+            if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
+            var encryptionKey = await GetEncryptionKeyAsync();
+            if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
+            try
+            {
+                var diary = await RestClient.GetDiaryAsync(_token, year, month, day);
+                diary.entry = DecodeText(diary.entry, encryptionKey, _userModel.passwordManagerSalt);
+                return diary;
+            }
+            catch (InvalidTokenException ex)
+            {
+                await LogoutAsync();
+                throw ex;
+            }
+        }
+
+        public async Task SaveDiaryAsync(int year, int month, int day, string entry)
+        {
+            if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
+            var encryptionKey = await GetEncryptionKeyAsync();
+            if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
+            string encryptedEntry = "";
+            if (!string.IsNullOrEmpty(entry))
+            {
+                encryptedEntry = EncodeText(entry, encryptionKey, _userModel.passwordManagerSalt);
+            }
+            try
+            {
+                await RestClient.SaveDiaryAsync(_token, year, month, day, encryptedEntry);
             }
             catch (InvalidTokenException ex)
             {

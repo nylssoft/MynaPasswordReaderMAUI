@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:drawable="clr-namespace:PasswordReader.Pages"
+             x:Class="PasswordReader.Pages.DiaryPage"
+             Title="Tagebuch">
+    <ContentPage.Resources>
+        <drawable:DiaryPageDrawable x:Key="drawable" />
+    </ContentPage.Resources>
+    <ScrollView>
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto" Margin="20,0,20,0" RowSpacing="10" HorizontalOptions="Start">
+            <Label Text="{Binding ErrorMessage}" IsVisible="{Binding HasErrorMessage}" StyleClass="ErrorMessageLabelStyle"/>
+            <HorizontalStackLayout Grid.Row="1" HorizontalOptions="Center" Spacing="10">
+                <Label Text="{Binding Title}" VerticalOptions="Center" WidthRequest="150"/>
+                <ImageButton Source="leftdark.png" WidthRequest="40" HeightRequest="40" VerticalOptions="Center" Clicked="Left_Clicked"/>
+                <ImageButton Source="rightdark.png" WidthRequest="40" HeightRequest="40" VerticalOptions="Center" Clicked="Right_Clicked"/>
+            </HorizontalStackLayout>
+            <GraphicsView Grid.Row="2" x:Name="graphicsView" Drawable="{StaticResource drawable}" HeightRequest="320" WidthRequest="320" StartInteraction="GraphicsView_StartInteraction"/>
+            <ActivityIndicator Grid.Row="3" IsRunning="{Binding IsRunning}" IsVisible="{Binding IsRunning}"/>
+        </Grid>
+    </ScrollView>
+</ContentPage>

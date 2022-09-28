@@ -32,6 +32,7 @@ public partial class AppShell : Shell
         BindingContext = _model;
         Routing.RegisterRoute("passworditem", typeof(PasswordItemPage));
         Routing.RegisterRoute("noteitem", typeof(NoteItemPage));
+        Routing.RegisterRoute("diaryitem", typeof(DiaryItemPage));
     }
 
     protected override async void OnAppearing()
@@ -54,7 +55,10 @@ public partial class AppShell : Shell
     protected override async void OnNavigating(ShellNavigatingEventArgs args)
     {
         base.OnNavigating(args);
-        if (App.ContextService.IsLoggedIn() && (App.ContextService.NoteChanged || App.ContextService.PasswordChanged))
+        if (App.ContextService.IsLoggedIn() && (
+            App.ContextService.NoteChanged |
+            App.ContextService.PasswordChanged ||
+            App.ContextService.DiaryChanged))
         {
             ShellNavigatingDeferral token = args.GetDeferral();
             var leavePage = await DisplayAlert("Seite verlassen", "Die Änderungen wurden nicht gespeichert. Willst Du die Seite wirklich verlassen?", "Ja", "Nein");
@@ -62,6 +66,7 @@ public partial class AppShell : Shell
             {
                 App.ContextService.NoteChanged = false;
                 App.ContextService.PasswordChanged = false;
+                App.ContextService.DiaryChanged = false;
             }
             else
             {

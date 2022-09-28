@@ -15,6 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+using System.Globalization;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
@@ -26,6 +27,8 @@ namespace PasswordReader.Services
         private static HttpClient httpClient = null;
 
         private static Dictionary<string, string> translateMap = null;
+
+        private const string ISO8601_DATEFORMAT = "yyyy-MM-dd'T'HH:mm:ss.fffK";
 
         public static async Task InitAsync(string cloudUrl, string locale)
         {
@@ -183,7 +186,44 @@ namespace PasswordReader.Services
             return lastModifiedUtc;
         }
 
-        public static async Task UploadPasswordFile(string token, string content)
+        public static async Task<List<int>> GetDiaryDaysAsync(string token, int year, int month)
+        {
+            var dt = new DateTime(year, month, 1);
+            var iso8601 = dt.ToString(ISO8601_DATEFORMAT, CultureInfo.InvariantCulture);
+            httpClient.DefaultRequestHeaders.Remove("token");
+            httpClient.DefaultRequestHeaders.Add("token", token);
+            var response = await httpClient.GetAsync($"api/diary/day?date={iso8601}");
+            await EnsureSuccessAsync(response);
+            return await response.Content.ReadFromJsonAsync<List<int>>();
+        }
+
+        public static async Task<Diary> GetDiaryAsync(string token, int year, int month, int day)
+        {
+            var dt = new DateTime(year, month, day);
+            var iso8601 = dt.ToString(ISO8601_DATEFORMAT, CultureInfo.InvariantCulture);
+            httpClient.DefaultRequestHeaders.Remove("token");
+            httpClient.DefaultRequestHeaders.Add("token", token);
+            var response = await httpClient.GetAsync($"api/diary/entry?date={iso8601}");
+            await EnsureSuccessAsync(response);
+            return await response.Content.ReadFromJsonAsync<Diary>();
+        }
+
+        public static async Task SaveDiaryAsync(string token, int year, int month, int day, string entry)
+        {
+            var dt = new DateTime(year, month, day);
+            var iso8601 = dt.ToString(ISO8601_DATEFORMAT, CultureInfo.InvariantCulture);
+            httpClient.DefaultRequestHeaders.Remove("token");
+            httpClient.DefaultRequestHeaders.Add("token", token);
+            var response = await httpClient.PostAsJsonAsync("api/diary/entry",
+                new
+                {
+                    Date = iso8601,
+                    Entry = entry
+                });
+            await EnsureSuccessAsync(response);
+        }
+
+        public static async Task UploadPasswordFileAsync(string token, string content)
         {
             httpClient.DefaultRequestHeaders.Remove("token");
             httpClient.DefaultRequestHeaders.Accept.Clear();

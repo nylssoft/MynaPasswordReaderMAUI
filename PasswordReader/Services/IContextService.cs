@@ -43,6 +43,12 @@ namespace PasswordReader.Services
 
         Task<DateTime> UpdateNoteAsync(long noteId, string title, string content);
 
+        Task<List<int>> GetDiaryDaysAsync(int year, int month);
+
+        Task<Diary> GetDiaryAsync(int year, int month, int day);
+
+        Task SaveDiaryAsync(int year, int month, int day, string entry);
+
         Task LogoutAsync();
 
         bool IsLoggedIn();
@@ -72,5 +78,7 @@ namespace PasswordReader.Services
         bool NoteChanged { get; set; }
 
         bool PasswordChanged { get; set; }
+
+        bool DiaryChanged { get; set; }
     }
 }
