@@ -36,6 +36,7 @@ public partial class NoteListPage : ContentPage
     protected async override void OnAppearing()
     {
         base.OnAppearing();
+        App.ContextService.StartPage = "//notelist";
         _model.SelectedNoteItem = new();
         if (App.ContextService.IsLoggedIn())
         {

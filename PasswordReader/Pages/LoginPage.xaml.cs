@@ -82,7 +82,7 @@ public partial class LoginPage : ContentPage
         }
         else
         {
-            page = "//passwordlist";
+            page = App.ContextService.StartPage;
         }
         await Shell.Current.GoToAsync(page);
     }

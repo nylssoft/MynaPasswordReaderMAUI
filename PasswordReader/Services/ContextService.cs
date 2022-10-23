@@ -44,11 +44,31 @@ namespace PasswordReader.Services
 
         private bool _diaryChanged = false;
 
+        private string _startPage = null;
+
         public bool NoteChanged { get => _noteChanged; set => _noteChanged = value; }
 
         public bool PasswordChanged { get => _passwordChanged; set => _passwordChanged = value; }
 
         public bool DiaryChanged { get => _diaryChanged; set => _diaryChanged = value; }
+
+        public string StartPage
+        {
+            get
+            {
+                if (_startPage == null)
+                {
+                    _startPage = Preferences.Default.Get(nameof(StartPage), "//passwordlist");
+                }
+                return _startPage;
+            }
+            set
+            {
+                if (_startPage == value) return;
+                _startPage = value;
+                Preferences.Default.Set(nameof(StartPage), _startPage);
+            }
+        }
 
         private async Task InitAsync()
         {

@@ -34,6 +34,7 @@ public partial class PasswordListPage : ContentPage
     protected async override void OnAppearing()
     {
         base.OnAppearing();
+        App.ContextService.StartPage = "//passwordlist";
         if (_model.PasswordItems == null || _model.HasErrorMessage)
         {
             _model.PasswordItems = new ObservableCollection<PasswordItemViewModel>();

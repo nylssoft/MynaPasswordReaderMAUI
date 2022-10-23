@@ -91,7 +91,7 @@ public partial class EncryptionKeyPage : ContentPage
             _model.SelectedNoteItem = null;
             _model.PasswordItems = null;
             _model.NoteItems = null;
-            await Shell.Current.GoToAsync("//passwordlist");
+            await Shell.Current.GoToAsync(App.ContextService.StartPage);
         }
         catch (Exception ex)
         {

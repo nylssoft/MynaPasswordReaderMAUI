@@ -33,6 +33,7 @@ public partial class DiaryPage : ContentPage
     protected async override void OnAppearing()
     {
         base.OnAppearing();
+        App.ContextService.StartPage = "//diary";
         await UpdateCalendarAsync();
     }
 

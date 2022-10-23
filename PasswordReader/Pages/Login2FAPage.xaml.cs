@@ -58,7 +58,7 @@ public partial class Login2FAPage : ContentPage
         }
         else
         {
-            page = "//passwordlist";
+            page = App.ContextService.StartPage;
         }
         await Shell.Current.GoToAsync(page);
     }

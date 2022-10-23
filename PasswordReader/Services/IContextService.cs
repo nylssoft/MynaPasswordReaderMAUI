@@ -84,5 +84,7 @@ namespace PasswordReader.Services
         bool PasswordChanged { get; set; }
 
         bool DiaryChanged { get; set; }
+
+        string StartPage { get; set; }
     }
 }

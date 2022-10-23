@@ -35,6 +35,7 @@ public partial class DocumentListPage : ContentPage
     protected async override void OnAppearing()
 	{
 		base.OnAppearing();
+        App.ContextService.StartPage = "//documentlist";
         if (_model.DocumentItems == null || _model.HasErrorMessage)
         {
             await GetDocumentItemsAsync();
