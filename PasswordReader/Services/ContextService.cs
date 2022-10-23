@@ -453,6 +453,37 @@ namespace PasswordReader.Services
             }
         }
 
+        public async Task<List<DocumentItem>> GetDocumentItemsAsync(long? currentId)
+        {
+            if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
+            try
+            {
+                return await RestClient.GetDocumentItemsAsync(_token, currentId);
+            }
+            catch (InvalidTokenException ex)
+            {
+                await LogoutAsync();
+                throw ex;
+            }
+        }
+
+        public async Task<byte[]> DownloadDocumentAsync(long id)
+        {
+            if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
+            var encryptionKey = await GetEncryptionKeyAsync();
+            if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
+            try
+            {
+                var encryptedData = await RestClient.DownloadDocumentAsync(_token, id);
+                return Decrypt(encryptedData, encryptionKey, _userModel.passwordManagerSalt);
+            }
+            catch (InvalidTokenException ex)
+            {
+                await LogoutAsync();
+                throw ex;
+            }
+        }
+
         public string GetUsername()
         {
             if (_loggedIn)

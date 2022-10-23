@@ -223,6 +223,29 @@ namespace PasswordReader.Services
             await EnsureSuccessAsync(response);
         }
 
+        public static async Task<List<DocumentItem>> GetDocumentItemsAsync(string token, long? currentId = null)
+        {
+            httpClient.DefaultRequestHeaders.Remove("token");
+            httpClient.DefaultRequestHeaders.Add("token", token);
+            var url = "api/document/items";
+            if (currentId != null)
+            {
+                url += $"/{currentId}";
+            }
+            var response = await httpClient.GetAsync(url);
+            await EnsureSuccessAsync(response);
+            return await response.Content.ReadFromJsonAsync<List<DocumentItem>>();
+        }
+
+        public static async Task<byte[]> DownloadDocumentAsync(string token, long id)
+        {
+            httpClient.DefaultRequestHeaders.Remove("token");
+            httpClient.DefaultRequestHeaders.Add("token", token);
+            var response = await httpClient.GetAsync($"api/document/download/{id}");
+            await EnsureSuccessAsync(response);
+            return await response.Content.ReadAsByteArrayAsync();
+        }
+
         public static async Task UploadPasswordFileAsync(string token, string content)
         {
             httpClient.DefaultRequestHeaders.Remove("token");

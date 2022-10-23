@@ -38,6 +38,11 @@
         Route="diary"/>
 
     <ShellContent
+        Title="Dokumente"
+        ContentTemplate="{DataTemplate page:DocumentListPage}"
+        Route="documentlist"/>
+
+    <ShellContent
         Title="Profil"
         ContentTemplate="{DataTemplate page:ProfilePage}"
         Route="profile"/>

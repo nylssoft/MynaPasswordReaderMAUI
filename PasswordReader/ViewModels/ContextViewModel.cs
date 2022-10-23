@@ -42,6 +42,8 @@ namespace PasswordReader.ViewModels
             SelectedPasswordItem = null;
             NoteItems = null;
             SelectedNoteItem = null;
+            DocumentItems = null;
+            CurrentDocumentItem = null;
         }
 
         private string _username;
@@ -228,6 +230,33 @@ namespace PasswordReader.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedNoteItem)));
             }
         }
+
+        private ObservableCollection<DocumentItemViewModel> _documentItems;
+        public ObservableCollection<DocumentItemViewModel> DocumentItems
+        {
+            get => _documentItems;
+            set
+            {
+                if (_documentItems == value) return;
+                _documentItems = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DocumentItems)));
+            }
+        }
+        
+        private DocumentItemViewModel _currentDocumentItem;
+        public DocumentItemViewModel CurrentDocumentItem
+        {
+            get => _currentDocumentItem;
+            set
+            {
+                if (_currentDocumentItem == value) return;
+                _currentDocumentItem = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentDocumentItem)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanNavigateUp)));
+            }
+        }
+
+        public bool CanNavigateUp => _currentDocumentItem != null && _currentDocumentItem.ParentId != null;
 
         public bool CanLogin => !_isLoggedIn && !_requires2FA && !_isRunning;
 

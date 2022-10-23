@@ -49,6 +49,10 @@ namespace PasswordReader.Services
 
         Task SaveDiaryAsync(int year, int month, int day, string entry);
 
+        Task<List<DocumentItem>> GetDocumentItemsAsync(long? currentId = null);
+
+        Task<byte[]> DownloadDocumentAsync(long id);
+
         Task LogoutAsync();
 
         bool IsLoggedIn();
