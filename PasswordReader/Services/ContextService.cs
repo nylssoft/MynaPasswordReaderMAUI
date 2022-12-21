@@ -28,6 +28,8 @@ namespace PasswordReader.Services
 
         private string _encryptionKey;
 
+        private byte[] _cryptoKey;
+
         private bool _requires2FA;
 
         private string _loginToken;
@@ -186,6 +188,7 @@ namespace PasswordReader.Services
             _loginToken = "";
             _userModel = null;
             _encryptionKey = null;
+            _cryptoKey = null;
             NoteChanged = false;
             PasswordChanged = false;
             DiaryChanged = false;
@@ -226,10 +229,33 @@ namespace PasswordReader.Services
             if (!_loggedIn) return false;
             if (_encryptionKey == null)
             {
-                _encryptionKey = await SecureStorage.Default.GetAsync($"encryptkey-{_userModel.id}");
-                if (_encryptionKey == null)
+                var storageValue = await SecureStorage.Default.GetAsync(StorageKey);
+                if (storageValue == null)
+                {
+                    storageValue = await MigrateEncryptionKeyAsync();
+                }
+                if (storageValue == null)
                 {
                     _encryptionKey = "";
+                    _cryptoKey = null;
+                }
+                else
+                {
+                    try
+                    {
+                        // decrypt storage value with secKey
+                        var key = Convert.FromHexString(_userModel.secKey);
+                        var data = Convert.FromHexString(storageValue);
+                        var decryptedData = DecryptData(data, key);
+                        _encryptionKey = Encoding.UTF8.GetString(decryptedData);
+                        // update derived crypto key (PKBDF2)
+                        _cryptoKey = GenerateKey(_encryptionKey, _userModel.passwordManagerSalt);
+                    }
+                    catch
+                    {
+                        _encryptionKey = "";
+                        _cryptoKey = null;
+                    }
                 }
             }
             return !string.IsNullOrEmpty(_encryptionKey);
@@ -257,14 +283,21 @@ namespace PasswordReader.Services
             if (encryptionKey != currentKey)
             {
                 _encryptionKey = encryptionKey;
-                var storageKey = $"encryptkey-{_userModel.id}";
                 if (string.IsNullOrEmpty(_encryptionKey))
                 {
-                    SecureStorage.Default.Remove(storageKey);
+                    _cryptoKey = null;
+                    SecureStorage.Default.Remove(StorageKey);
                 }
                 else
                 {
-                    await SecureStorage.Default.SetAsync(storageKey, _encryptionKey);
+                    // update derived crypto key (PKBDF2)
+                    _cryptoKey = GenerateKey(_encryptionKey, _userModel.passwordManagerSalt);
+                    // encrypt storage value with secKey
+                    var key = Convert.FromHexString(_userModel.secKey);
+                    var data = Encoding.UTF8.GetBytes(_encryptionKey);
+                    var encryptedData = EncryptData(data, key);
+                    var storageValue = Convert.ToHexString(encryptedData);
+                    await SecureStorage.Default.SetAsync(StorageKey, storageValue);
                 }
             }
         }
@@ -278,7 +311,7 @@ namespace PasswordReader.Services
             try
             {
                 var encrypted = await RestClient.GetPasswordFileAsync(_token);
-                return DecryptPasswordItems(encrypted, encryptionKey, _userModel.passwordManagerSalt);
+                return DecryptPasswordItems(encrypted);
             }
             catch (InvalidTokenException ex)
             {
@@ -293,7 +326,7 @@ namespace PasswordReader.Services
             var encryptionKey = await GetEncryptionKeyAsync();
             if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
             var data = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(items));
-            var encrypted = Encrypt(data, encryptionKey, _userModel.passwordManagerSalt);
+            var encrypted = EncryptData(data, _cryptoKey);
             var content = JsonSerializer.Serialize(Convert.ToHexString(encrypted));
             try
             {
@@ -316,7 +349,7 @@ namespace PasswordReader.Services
             if (!_userModel.hasPasswordManagerFile) throw new ArgumentException("Es wurden keine Passwörter hochgeladen.");
             var encryptionKey = await GetEncryptionKeyAsync();
             if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
-            return DecodeText(encryptedPassword, encryptionKey, _userModel.passwordManagerSalt);
+            return DecodeText(encryptedPassword);
         }
 
         public async Task<string> EncodePasswordAsync(string password)
@@ -325,7 +358,7 @@ namespace PasswordReader.Services
             if (!_userModel.hasPasswordManagerFile) throw new ArgumentException("Es wurden keine Passwörter hochgeladen.");
             var encryptionKey = await GetEncryptionKeyAsync();
             if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
-            return EncodeText(password, encryptionKey, _userModel.passwordManagerSalt);
+            return EncodeText(password);
         }
 
         public async Task<List<Note>> GetNotesAsync()
@@ -339,7 +372,7 @@ namespace PasswordReader.Services
                 var notes = await RestClient.GetNotesAsync(_token);
                 foreach (var note in notes)
                 {
-                    note.title = DecodeText(note.title, encryptionKey, _userModel.passwordManagerSalt);
+                    note.title = DecodeText(note.title);
                     ret.Add(note);
                 }
                 return ret;
@@ -359,8 +392,8 @@ namespace PasswordReader.Services
             try
             {
                 var note = await RestClient.GetNoteAsync(_token, id);
-                note.title = DecodeText(note.title, encryptionKey, _userModel.passwordManagerSalt);
-                note.content = DecodeText(note.content, encryptionKey, _userModel.passwordManagerSalt);
+                note.title = DecodeText(note.title);
+                note.content = DecodeText(note.content);
                 return note;
             }
             catch (InvalidTokenException ex)
@@ -375,7 +408,7 @@ namespace PasswordReader.Services
             if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
             var encryptionKey = await GetEncryptionKeyAsync();
             if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
-            string encryptedTitle = EncodeText("Neue Notiz", encryptionKey, _userModel.passwordManagerSalt);
+            string encryptedTitle = EncodeText("Neue Notiz");
             try
             {
                 var noteid = await RestClient.CreateNewNoteAsync(_token, encryptedTitle);
@@ -407,8 +440,8 @@ namespace PasswordReader.Services
             if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
             var encryptionKey = await GetEncryptionKeyAsync();
             if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
-            var encryptedTitle = EncodeText(title, encryptionKey, _userModel.passwordManagerSalt);
-            var encryptedContent = EncodeText(content, encryptionKey, _userModel.passwordManagerSalt);
+            var encryptedTitle = EncodeText(title);
+            var encryptedContent = EncodeText(content);
             try
             {
                 return await RestClient.UpdateNoteAsync(_token, id, encryptedTitle, encryptedContent);
@@ -442,7 +475,7 @@ namespace PasswordReader.Services
             try
             {
                 var diary = await RestClient.GetDiaryAsync(_token, year, month, day);
-                diary.entry = DecodeText(diary.entry, encryptionKey, _userModel.passwordManagerSalt);
+                diary.entry = DecodeText(diary.entry);
                 return diary;
             }
             catch (InvalidTokenException ex)
@@ -460,7 +493,7 @@ namespace PasswordReader.Services
             string encryptedEntry = "";
             if (!string.IsNullOrEmpty(entry))
             {
-                encryptedEntry = EncodeText(entry, encryptionKey, _userModel.passwordManagerSalt);
+                encryptedEntry = EncodeText(entry);
             }
             try
             {
@@ -495,7 +528,7 @@ namespace PasswordReader.Services
             try
             {
                 var encryptedData = await RestClient.DownloadDocumentAsync(_token, id);
-                return Decrypt(encryptedData, encryptionKey, _userModel.passwordManagerSalt);
+                return DecryptData(encryptedData, _cryptoKey);
             }
             catch (InvalidTokenException ex)
             {
@@ -542,41 +575,49 @@ namespace PasswordReader.Services
 
         // helpers
 
-        private static string DecodeText(string encrypted, string cryptKey, string salt)
+        private string DecodeText(string encrypted)
         {
             if (string.IsNullOrEmpty(encrypted))
             {
                 return "";
             }
-            var decoded = Decrypt(Convert.FromHexString(encrypted), cryptKey, salt);
+            var decoded = DecryptData(Convert.FromHexString(encrypted), _cryptoKey);
             return Encoding.UTF8.GetString(decoded);
         }
 
-        private static string EncodeText(string text, string cryptKey, string salt)
+        private string EncodeText(string text)
         {
-            return Convert.ToHexString(Encrypt(Encoding.UTF8.GetBytes(text), cryptKey, salt));
+            var data = Encoding.UTF8.GetBytes(text);
+            var encrypted = EncryptData(data, _cryptoKey);
+            return Convert.ToHexString(encrypted);
         }
 
-        private static List<PasswordItem> DecryptPasswordItems(string encrypted, string cryptKey, string salt)
+        private List<PasswordItem> DecryptPasswordItems(string encrypted)
         {
-            var plainText = Decrypt(Convert.FromHexString(encrypted), cryptKey, salt);
+            var data = DecryptData(Convert.FromHexString(encrypted), _cryptoKey);
+            var plainText = Encoding.UTF8.GetString(data);
             var pwdItems = JsonSerializer.Deserialize<List<PasswordItem>>(plainText);
             pwdItems.Sort((i1, i2) => i1.Name.CompareTo(i2.Name));
             return pwdItems;
         }
 
-        private static byte[] Encrypt(byte[] data, string cryptKey, string salt)
+
+        private static byte[] GenerateKey(string cryptKey, string salt)
+        {
+            return Rfc2898DeriveBytes.Pbkdf2(
+                cryptKey,
+                Encoding.UTF8.GetBytes(salt),
+                1000, HashAlgorithmName.SHA256,
+                256 / 8);
+        }
+
+        private static byte[] EncryptData(byte[] data, byte[] key)
         {
             var iv = new byte[12];
             using (var rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(iv);
             }
-            var key = Rfc2898DeriveBytes.Pbkdf2(
-                cryptKey,
-                Encoding.UTF8.GetBytes(salt),
-                1000, HashAlgorithmName.SHA256,
-                256 / 8);
             var encoded = new byte[data.Length];
             var tag = new byte[16];
             using (var cipher = new AesGcm(key))
@@ -590,17 +631,11 @@ namespace PasswordReader.Services
             return ret;
         }
 
-        private static byte[] Decrypt(byte[] data, string cryptKey, string salt)
+        private static byte[] DecryptData(byte[] data, byte [] key)
         {
             byte[] iv = data[0..12];
             byte[] chipherText = data[12..^16];
             byte[] tag = data[^16..];
-            byte[] key = Rfc2898DeriveBytes.Pbkdf2(
-                cryptKey,
-                Encoding.UTF8.GetBytes(salt),
-                1000,
-                HashAlgorithmName.SHA256,
-                256 / 8);
             byte[] plainText = new byte[chipherText.Length];
             using (var cipher = new AesGcm(key))
             {
@@ -614,6 +649,26 @@ namespace PasswordReader.Services
                 }
             }
             return plainText;
+        }
+
+        private string StorageKey { get => $"encryptkey-{_userModel.id}-secure"; }
+
+        private async Task<string> MigrateEncryptionKeyAsync()
+        {
+            var oldStorageKey = $"encryptkey-{_userModel.id}";
+            var oldStorageValue = await SecureStorage.Default.GetAsync(oldStorageKey);
+            if (oldStorageValue != null)
+            {
+                SecureStorage.Default.Remove(oldStorageKey);
+                // encrypt old storage value with secKey
+                var data = Encoding.UTF8.GetBytes(oldStorageValue);
+                var key = Convert.FromHexString(_userModel.secKey);
+                var encryptedData = EncryptData(data, key);
+                var newStorageValue = Convert.ToHexString(encryptedData);
+                await SecureStorage.Default.SetAsync(StorageKey, newStorageValue);
+                return newStorageValue;
+            }
+            return null;
         }
     }
 }

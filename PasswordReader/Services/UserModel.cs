@@ -50,5 +50,7 @@ namespace PasswordReader.Services
         public long usedStorage { get; set; }
 
         public bool loginEnabled { get; set; }
+
+        public string secKey { get; set; }
     }
 }
