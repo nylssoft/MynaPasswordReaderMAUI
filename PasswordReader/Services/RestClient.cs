@@ -1,6 +1,6 @@
 ﻿/*
     Myna Password Reader MAUI
-    Copyright (C) 2022 Niels Stockfleth
+    Copyright (C) 2022-2023 Niels Stockfleth
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -112,6 +112,15 @@ namespace PasswordReader.Services
             httpClient.DefaultRequestHeaders.Remove("token");
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.PostAsJsonAsync("api/pwdman/auth2", totp);
+            await EnsureSuccessAsync(response);
+            return await response.Content.ReadFromJsonAsync<AuthenticationResult>();
+        }
+
+        public static async Task<AuthenticationResult> AuthenticatePin(string lltoken, string pin)
+        {
+            httpClient.DefaultRequestHeaders.Remove("token");
+            httpClient.DefaultRequestHeaders.Add("token", lltoken);
+            var response = await httpClient.PostAsJsonAsync("api/pwdman/auth/pin", pin);
             await EnsureSuccessAsync(response);
             return await response.Content.ReadFromJsonAsync<AuthenticationResult>();
         }

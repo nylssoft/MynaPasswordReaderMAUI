@@ -11,12 +11,17 @@
         Title="Anmelden"
         ContentTemplate="{DataTemplate page:LoginPage}"
         Route="login"/>
-
+    
     <ShellContent
         Title="Sicherheitscode"
         ContentTemplate="{DataTemplate page:Login2FAPage}"
         Route="login2fa"/>
-    
+
+    <ShellContent
+        Title="PIN"
+        ContentTemplate="{DataTemplate page:LoginPinPage}"
+        Route="loginpin"/>
+
     <ShellContent
         Title="Schlüssel"
         ContentTemplate="{DataTemplate page:EncryptionKeyPage}"

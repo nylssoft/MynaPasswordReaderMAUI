@@ -1,6 +1,6 @@
 /*
     Myna Password Reader MAUI
-    Copyright (C) 2022 Niels Stockfleth
+    Copyright (C) 2022-2023 Niels Stockfleth
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -75,6 +75,10 @@ public partial class LoginPage : ContentPage
         if (App.ContextService.Requires2FA())
         {
             page = "//login2fa";
+        }
+        else if (App.ContextService.RequiresPin())
+        {
+            page = "//loginpin";
         }
         else if (string.IsNullOrEmpty(_model.EncryptionKey))
         {

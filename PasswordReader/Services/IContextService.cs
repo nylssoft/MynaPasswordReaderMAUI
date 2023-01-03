@@ -1,6 +1,6 @@
 ﻿/*
     Myna Password Reader MAUI
-    Copyright (C) 2022 Niels Stockfleth
+    Copyright (C) 2022-2023 Niels Stockfleth
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@ namespace PasswordReader.Services
         Task Login2FAAsync(string securityCode);
 
         Task LoginWithTokenAsync();
+
+        Task LoginWithPinAsync(string pin);
 
         Task<List<PasswordItem>> GetPasswordItemsAsync();
 
@@ -58,6 +60,8 @@ namespace PasswordReader.Services
         bool IsLoggedIn();
         
         bool Requires2FA();
+
+        bool RequiresPin();
 
         bool HasPasswordItems();
 

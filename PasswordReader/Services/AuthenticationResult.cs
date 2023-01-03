@@ -1,6 +1,6 @@
 ﻿/*
     Myna Password Reader MAUI
-    Copyright (C) 2022 Niels Stockfleth
+    Copyright (C) 2022-2023 Niels Stockfleth
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ namespace PasswordReader.Services
     {
         public string token { get; set; }
         public bool requiresPass2 { get; set; }
+        public bool requiresPin { get; set; }
         public string longLivedToken { get; set; }
         public string username { get; set; }
     }

@@ -1,6 +1,6 @@
 ﻿/*
     Myna Password Reader MAUI
-    Copyright (C) 2022 Niels Stockfleth
+    Copyright (C) 2022-2023 Niels Stockfleth
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,9 +34,11 @@ namespace PasswordReader.ViewModels
             LastLogin = App.ContextService.GetLastLogin();
             Password = "";
             SecurityCode = "";
+            Pin = "";
             EncryptionKey = await App.ContextService.GetEncryptionKeyAsync();
             IsLoggedIn = App.ContextService.IsLoggedIn();
             Requires2FA = App.ContextService.Requires2FA();
+            RequiresPin = App.ContextService.RequiresPin();
             HasLoginToken = await App.ContextService.HasLoginTokenAsync();
             PasswordItems = null;
             SelectedPasswordItem = null;
@@ -98,6 +100,18 @@ namespace PasswordReader.ViewModels
             }
         }
 
+        private string _pin;
+        public string Pin
+        {
+            get => _pin;
+            set
+            {
+                if (_pin == value) return;
+                _pin = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Pin)));
+            }
+        }
+
         private bool _hasLoginToken;
         public bool HasLoginToken
         {
@@ -144,6 +158,19 @@ namespace PasswordReader.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLoginWithToken)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLogout)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanConfirmSecurityCode)));
+            }
+        }
+
+        private bool _requiresPin;
+        public bool RequiresPin
+        {
+            get => _requiresPin;
+            set
+            {
+                if (_requiresPin == value) return;
+                _requiresPin = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RequiresPin)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanConfirmPin)));
             }
         }
 
@@ -264,6 +291,8 @@ namespace PasswordReader.ViewModels
 
         public bool CanConfirmSecurityCode => _requires2FA && !_isRunning;
 
+        public bool CanConfirmPin => _requiresPin && !_isRunning;
+
         public bool CanChangeEncryptionKey => _isLoggedIn;
 
         public bool CanLogout => _isLoggedIn || _requires2FA;
@@ -289,6 +318,7 @@ namespace PasswordReader.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLoginWithToken)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLogout)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanConfirmSecurityCode)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanConfirmPin)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreateNote)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreatePassword)));
             }

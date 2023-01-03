@@ -1,6 +1,6 @@
 ﻿/*
     Myna Password Reader MAUI
-    Copyright (C) 2022 Niels Stockfleth
+    Copyright (C) 2022-2023 Niels Stockfleth
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,6 +31,8 @@ namespace PasswordReader.Services
         private byte[] _cryptoKey;
 
         private bool _requires2FA;
+
+        private bool _requiresPin;
 
         private string _loginToken;
 
@@ -105,6 +107,7 @@ namespace PasswordReader.Services
             _token = authResult.token;
             _loginToken = authResult.longLivedToken;
             _requires2FA = authResult.requiresPass2;
+            _requiresPin = false;
             if (string.IsNullOrEmpty(_loginToken))
             {
                 SecureStorage.Default.Remove("lltoken");
@@ -138,6 +141,7 @@ namespace PasswordReader.Services
                 _userModel = await RestClient.GetUserAsync(_token);
                 _loggedIn = true;
                 _requires2FA = false;
+                _requiresPin = false;
             }
             catch (InvalidTokenException ex)
             {
@@ -154,14 +158,22 @@ namespace PasswordReader.Services
             try
             {
                 var authResult = await RestClient.AuthenticateLLTokenAsync(_loginToken);
-                _userModel = await RestClient.GetUserAsync(authResult.token);
-                _token = authResult.token;
-                _loggedIn = true;
-                _requires2FA = false;
-                if (_loginToken != authResult.longLivedToken)
+                if (authResult.requiresPin)
                 {
-                    _loginToken = authResult.longLivedToken;
-                    await SecureStorage.Default.SetAsync("lltoken", _loginToken);
+                    _requiresPin = true;
+                }
+                else
+                {
+                    _userModel = await RestClient.GetUserAsync(authResult.token);
+                    _token = authResult.token;
+                    _loggedIn = true;
+                    _requires2FA = false;
+                    _requiresPin = false;
+                    if (_loginToken != authResult.longLivedToken)
+                    {
+                        _loginToken = authResult.longLivedToken;
+                        await SecureStorage.Default.SetAsync("lltoken", _loginToken);
+                    }
                 }
             }
             catch
@@ -169,6 +181,25 @@ namespace PasswordReader.Services
                 _loginToken = "";
                 SecureStorage.Default.Remove("lltoken");
                 throw;
+            }
+        }
+
+        public async Task LoginWithPinAsync(string pin)
+        {
+            if (_loggedIn || _requires2FA) throw new ArgumentException("Du bist noch angemeldet.");
+            if (!_requiresPin) throw new ArgumentException("Anmeldung mit PIN nicht möglich.");
+            if (!await HasLoginTokenAsync()) throw new ArgumentException("Anmeldung mit Langzeit-Token nicht möglich.");
+            await InitAsync();
+            var authResult = await RestClient.AuthenticatePin(_loginToken, pin);
+            _userModel = await RestClient.GetUserAsync(authResult.token);
+            _token = authResult.token;
+            _loggedIn = true;
+            _requires2FA = false;
+            _requiresPin = false;
+            if (_loginToken != authResult.longLivedToken)
+            {
+                _loginToken = authResult.longLivedToken;
+                await SecureStorage.Default.SetAsync("lltoken", _loginToken);
             }
         }
 
@@ -184,6 +215,7 @@ namespace PasswordReader.Services
             }
             _loggedIn = false;
             _requires2FA = false;
+            _requiresPin = false;
             _token = null;
             _loginToken = "";
             _userModel = null;
@@ -204,6 +236,11 @@ namespace PasswordReader.Services
         public bool Requires2FA()
         {
             return _requires2FA;
+        }
+
+        public bool RequiresPin()
+        {
+            return _requiresPin;
         }
 
         public bool IsLoggedOut()
