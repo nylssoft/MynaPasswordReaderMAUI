@@ -157,7 +157,14 @@ namespace PasswordReader.Services
             await InitAsync();
             try
             {
-                var authResult = await RestClient.AuthenticateLLTokenAsync(_loginToken);
+                string clientUUID = "";
+                var clinfo = await SecureStorage.Default.GetAsync("clientinfo");
+                if (clinfo != null)
+                {
+                    var clientInfo = JsonSerializer.Deserialize<ClientInfo>(clinfo);
+                    clientUUID = clientInfo.UUID;
+                }
+                var authResult = await RestClient.AuthenticateLLTokenAsync(_loginToken, clientUUID);
                 if (authResult.requiresPin)
                 {
                     _requiresPin = true;

@@ -78,6 +78,7 @@ namespace PasswordReader.Services
             {
                 url += $"?locale={locale}";
             }
+            RemoveDefaultRequestHeaders();
             var response = await httpClient.PostAsJsonAsync(url, new AuthenticationModel
             {
                 Username = username,
@@ -91,17 +92,18 @@ namespace PasswordReader.Services
 
         public static async Task<UserModel> GetUserAsync(string token)
         {
-            httpClient.DefaultRequestHeaders.Remove("token");
+            RemoveDefaultRequestHeaders();
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.GetAsync("api/pwdman/user");
             await EnsureSuccessAsync(response);
             return await response.Content.ReadFromJsonAsync<UserModel>();
         }
 
-        public static async Task<AuthenticationResult> AuthenticateLLTokenAsync(string lltoken)
+        public static async Task<AuthenticationResult> AuthenticateLLTokenAsync(string lltoken, string clientUUID)
         {
-            httpClient.DefaultRequestHeaders.Remove("token");
+            RemoveDefaultRequestHeaders();
             httpClient.DefaultRequestHeaders.Add("token", lltoken);
+            httpClient.DefaultRequestHeaders.Add("uuid", clientUUID);
             var response = await httpClient.GetAsync("api/pwdman/auth/lltoken");
             await EnsureSuccessAsync(response);
             return await response.Content.ReadFromJsonAsync<AuthenticationResult>();
@@ -109,7 +111,7 @@ namespace PasswordReader.Services
 
         public static async Task<AuthenticationResult> AuthenticatePass2Async(string token, string totp)
         {
-            httpClient.DefaultRequestHeaders.Remove("token");
+            RemoveDefaultRequestHeaders();
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.PostAsJsonAsync("api/pwdman/auth2", totp);
             await EnsureSuccessAsync(response);
@@ -118,7 +120,7 @@ namespace PasswordReader.Services
 
         public static async Task<AuthenticationResult> AuthenticatePin(string lltoken, string pin)
         {
-            httpClient.DefaultRequestHeaders.Remove("token");
+            RemoveDefaultRequestHeaders();
             httpClient.DefaultRequestHeaders.Add("token", lltoken);
             var response = await httpClient.PostAsJsonAsync("api/pwdman/auth/pin", pin);
             await EnsureSuccessAsync(response);
@@ -127,7 +129,7 @@ namespace PasswordReader.Services
 
         public static async Task<bool> LogoutAsync(string token)
         {
-            httpClient.DefaultRequestHeaders.Remove("token");
+            RemoveDefaultRequestHeaders();
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.GetAsync("api/pwdman/logout");
             await EnsureSuccessAsync(response);
@@ -136,7 +138,7 @@ namespace PasswordReader.Services
 
         public static async Task<string> GetPasswordFileAsync(string token)
         {
-            httpClient.DefaultRequestHeaders.Remove("token");
+            RemoveDefaultRequestHeaders();
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.GetAsync("api/pwdman/file");
             await EnsureSuccessAsync(response);
@@ -145,7 +147,7 @@ namespace PasswordReader.Services
 
         public static async Task<List<Note>> GetNotesAsync(string token)
         {
-            httpClient.DefaultRequestHeaders.Remove("token");
+            RemoveDefaultRequestHeaders();
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.GetAsync("api/notes/note");
             await EnsureSuccessAsync(response);
@@ -154,7 +156,7 @@ namespace PasswordReader.Services
 
         public static async Task<Note> GetNoteAsync(string token, long id)
         {
-            httpClient.DefaultRequestHeaders.Remove("token");
+            RemoveDefaultRequestHeaders();
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.GetAsync($"api/notes/note/{id}");
             await EnsureSuccessAsync(response);
@@ -163,7 +165,7 @@ namespace PasswordReader.Services
 
         public static async Task<long> CreateNewNoteAsync(string token, string title)
         {
-            httpClient.DefaultRequestHeaders.Remove("token");
+            RemoveDefaultRequestHeaders();
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.PostAsJsonAsync("api/notes/note",
                 new {
@@ -175,7 +177,7 @@ namespace PasswordReader.Services
 
         public static async Task DeleteNoteAsync(string token, long id)
         {
-            httpClient.DefaultRequestHeaders.Remove("token");
+            RemoveDefaultRequestHeaders();
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.DeleteAsync($"api/notes/note/{id}");
             await EnsureSuccessAsync(response);
@@ -183,7 +185,7 @@ namespace PasswordReader.Services
 
         public static async Task<DateTime> UpdateNoteAsync(string token, long id, string title, string content)
         {
-            httpClient.DefaultRequestHeaders.Remove("token");
+            RemoveDefaultRequestHeaders();
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.PutAsJsonAsync("api/notes/note",
                 new {
@@ -199,7 +201,7 @@ namespace PasswordReader.Services
         {
             var dt = new DateTime(year, month, 1);
             var iso8601 = dt.ToString(ISO8601_DATEFORMAT, CultureInfo.InvariantCulture);
-            httpClient.DefaultRequestHeaders.Remove("token");
+            RemoveDefaultRequestHeaders();
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.GetAsync($"api/diary/day?date={iso8601}");
             await EnsureSuccessAsync(response);
@@ -210,7 +212,7 @@ namespace PasswordReader.Services
         {
             var dt = new DateTime(year, month, day);
             var iso8601 = dt.ToString(ISO8601_DATEFORMAT, CultureInfo.InvariantCulture);
-            httpClient.DefaultRequestHeaders.Remove("token");
+            RemoveDefaultRequestHeaders();
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.GetAsync($"api/diary/entry?date={iso8601}");
             await EnsureSuccessAsync(response);
@@ -221,7 +223,7 @@ namespace PasswordReader.Services
         {
             var dt = new DateTime(year, month, day);
             var iso8601 = dt.ToString(ISO8601_DATEFORMAT, CultureInfo.InvariantCulture);
-            httpClient.DefaultRequestHeaders.Remove("token");
+            RemoveDefaultRequestHeaders();
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.PostAsJsonAsync("api/diary/entry",
                 new
@@ -234,7 +236,7 @@ namespace PasswordReader.Services
 
         public static async Task<List<DocumentItem>> GetDocumentItemsAsync(string token, long? currentId = null)
         {
-            httpClient.DefaultRequestHeaders.Remove("token");
+            RemoveDefaultRequestHeaders();
             httpClient.DefaultRequestHeaders.Add("token", token);
             var url = "api/document/items";
             if (currentId != null)
@@ -248,7 +250,7 @@ namespace PasswordReader.Services
 
         public static async Task<byte[]> DownloadDocumentAsync(string token, long id)
         {
-            httpClient.DefaultRequestHeaders.Remove("token");
+            RemoveDefaultRequestHeaders();
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.GetAsync($"api/document/download/{id}");
             await EnsureSuccessAsync(response);
@@ -257,7 +259,7 @@ namespace PasswordReader.Services
 
         public static async Task UploadPasswordFileAsync(string token, string content)
         {
-            httpClient.DefaultRequestHeaders.Remove("token");
+            RemoveDefaultRequestHeaders();
             httpClient.DefaultRequestHeaders.Accept.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpClient.DefaultRequestHeaders.Add("token", token);
@@ -277,6 +279,12 @@ namespace PasswordReader.Services
                 }
                 throw new ArgumentException(message);
             }
+        }
+
+        private static void RemoveDefaultRequestHeaders()
+        {
+            httpClient.DefaultRequestHeaders.Remove("token");
+            httpClient.DefaultRequestHeaders.Remove("uuid");
         }
     }
 }
