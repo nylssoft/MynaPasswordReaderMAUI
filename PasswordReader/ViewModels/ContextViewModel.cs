@@ -42,6 +42,8 @@ namespace PasswordReader.ViewModels
             HasLoginToken = await App.ContextService.HasLoginTokenAsync();
             PasswordItems = null;
             SelectedPasswordItem = null;
+            ContactItems = null;
+            SelectedContactItem = null;
             NoteItems = null;
             SelectedNoteItem = null;
             DocumentItems = null;
@@ -195,6 +197,30 @@ namespace PasswordReader.ViewModels
                 if (_selectedPasswordItem == value) return;
                 _selectedPasswordItem = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedPasswordItem)));
+            }
+        }
+
+        private ObservableCollection<ContactItemViewModel> _contactItems;
+        public ObservableCollection<ContactItemViewModel> ContactItems
+        {
+            get => _contactItems;
+            set
+            {
+                if (_contactItems == value) return;
+                _contactItems = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ContactItems)));
+            }
+        }
+
+        private ContactItemViewModel _selectedContactItem;
+        public ContactItemViewModel SelectedContactItem
+        {
+            get => _selectedContactItem;
+            set
+            {
+                if (_selectedContactItem == value) return;
+                _selectedContactItem = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedContactItem)));
             }
         }
 
@@ -357,5 +383,25 @@ namespace PasswordReader.ViewModels
             }
             await App.ContextService.UploadPasswordItemsAsync(pwditems);
         }
+
+        public async Task UploadContactItemsAsync()
+        {
+            List<ContactItem> contactitems = new();
+            foreach (var itemModel in _contactItems)
+            {
+                contactitems.Add(new ContactItem
+                {
+                    id = itemModel.Id,
+                    name = itemModel.Name,
+                    address = itemModel.Address,
+                    phone = itemModel.Phone,
+                    birthday = itemModel.Birthday,
+                    email = itemModel.Email,
+                    note = itemModel.Note,
+                });
+            }
+            await App.ContextService.UploadContactItemsAsync(contactitems);
+        }
+
     }
 }

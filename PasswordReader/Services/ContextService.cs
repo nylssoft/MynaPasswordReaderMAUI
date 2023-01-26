@@ -48,6 +48,8 @@ namespace PasswordReader.Services
 
         private bool _diaryChanged = false;
 
+        private bool _contactChanged = false;
+
         private string _startPage = null;
 
         public bool NoteChanged { get => _noteChanged; set => _noteChanged = value; }
@@ -55,6 +57,8 @@ namespace PasswordReader.Services
         public bool PasswordChanged { get => _passwordChanged; set => _passwordChanged = value; }
 
         public bool DiaryChanged { get => _diaryChanged; set => _diaryChanged = value; }
+
+        public bool ContactChanged { get => _contactChanged; set => _contactChanged = value; }
 
         public string StartPage
         {
@@ -231,6 +235,7 @@ namespace PasswordReader.Services
             NoteChanged = false;
             PasswordChanged = false;
             DiaryChanged = false;
+            ContactChanged = false;
             SecureStorage.Default.Remove("lltoken");
             await App.ContextViewModel.InitAsync();
         }
@@ -343,6 +348,47 @@ namespace PasswordReader.Services
                     var storageValue = Convert.ToHexString(encryptedData);
                     await SecureStorage.Default.SetAsync(StorageKey, storageValue);
                 }
+            }
+        }
+
+        public async Task<List<ContactItem>> GetContactItemsAsync()
+        {
+            if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
+            var encryptionKey = await GetEncryptionKeyAsync();
+            if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
+            try
+            {
+                var encrypted = await RestClient.GetContactsAsync(_token);
+                var json = DecodeText(encrypted);
+                var contactData = JsonSerializer.Deserialize<ContactData>(json);
+                return contactData.items;
+            }
+            catch (InvalidTokenException ex)
+            {
+                await LogoutAsync();
+                throw ex;
+            }
+        }
+
+        public async Task UploadContactItemsAsync(List<ContactItem> contactItems)
+        {
+            if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
+            var encryptionKey = await GetEncryptionKeyAsync();
+            if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
+            var contactData = new ContactData();
+            contactData.version = 1;
+            contactData.nextId = contactItems.Max(x => x.id) + 1;
+            contactData.items = contactItems.OrderBy(x => x.id).ToList();
+            try
+            {
+                var json = JsonSerializer.Serialize(contactData);
+                var encoded = EncodeText(json);
+                await RestClient.SetContactsAsync(_token, encoded);
+            }
+            catch (InvalidTokenException ex)
+            {
+                await LogoutAsync();
+                throw ex;
             }
         }
 

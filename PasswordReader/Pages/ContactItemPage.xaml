@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PasswordReader.Pages.ContactItemPage"
+             Title="Kontakt">
+    <ScrollView>
+        <VerticalStackLayout Margin="20,0,20,0" Spacing="20">
+            <HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="10">
+                    <Button Text="Speichern" WidthRequest="150" Clicked="SaveContact_Clicked" IsVisible="{Binding CanSaveContact}" IsEnabled="{Binding CanSaveContact}"/>
+                    <Button Text="Löschen" WidthRequest="150" Clicked="DeleteContact_Clicked" IsVisible="{Binding CanDeleteContact}" IsEnabled="{Binding CanDeleteContact}"/>
+                    <ActivityIndicator IsRunning="{Binding IsRunning}" />
+                </HorizontalStackLayout>
+            </HorizontalStackLayout>
+            <VerticalStackLayout>
+                <Label Text="Name:" VerticalOptions="Center"/>
+                <Border Padding="10,0,0,0">
+                    <Entry Text="{Binding Name}" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" TextChanged="Contact_Changed"/>
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout>
+                <Label Text="Adresse:" VerticalOptions="Center"/>
+                <Border Padding="10,0,0,0">
+                    <Entry Text="{Binding Address}" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" TextChanged="Contact_Changed"/>
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout>
+                <Label Text="Telefon:" VerticalOptions="Center"/>
+                <Border Padding="10,0,0,0">
+                    <Entry Text="{Binding Phone}" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" TextChanged="Contact_Changed"/>
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout>
+                <Label Text="Geburtstag:" VerticalOptions="Center"/>
+                <Border Padding="10,0,0,0">
+                    <Entry Text="{Binding Birthday}" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" TextChanged="Contact_Changed"/>
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout>
+                <Label Text="E-Mail-Adresse:" VerticalOptions="Center"/>
+                <Border Padding="10,0,0,0">
+                    <Entry Text="{Binding Email}" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" TextChanged="Contact_Changed"/>
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout>
+                <Label Text="Notiz:" VerticalOptions="Center"/>
+                <Border Padding="10,0,0,0">
+                    <Editor Text="{Binding Note}" AutoSize="TextChanges" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" TextChanged="Contact_Changed"/>
+                </Border>
+            </VerticalStackLayout>
+            <Label Text="{Binding StatusMessage}" StyleClass="StatusMessageLabelStyle"/>
+            <Button Text="Zurück" WidthRequest="100" HorizontalOptions="Center" Clicked="Back_Clicked"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PasswordReader.Pages.ContactListPage"
+             Title="Kontakte">
+    <Grid RowDefinitions="Auto,*,Auto" Margin="20,0,20,0" RowSpacing="10">
+        <Label Text="{Binding ErrorMessage}" IsVisible="{Binding HasErrorMessage}" StyleClass="ErrorMessageLabelStyle"/>
+        <CollectionView Grid.Row="1" ItemsSource="{Binding ContactItems}" SelectionMode="Single" SelectedItem="{Binding SelectedContactItem}" SelectionChanged="CollectionView_SelectionChanged">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="Auto" RowDefinitions="Auto" Padding="0,5" >
+                        <Label Grid.Column="1" Text="{Binding DisplayName}" HorizontalOptions="Start" VerticalOptions="Center"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <HorizontalStackLayout Grid.Row="2" Spacing="10" HorizontalOptions="Center">
+            <Button Text="Neuen Kontakt anlegen" WidthRequest="250" Clicked="NewContact_Clicked" IsVisible="{Binding CanCreateContact}" IsEnabled="{Binding CanCreateContact}"/>
+            <ActivityIndicator IsRunning="{Binding IsRunning}" />
+        </HorizontalStackLayout>
+    </Grid>
+</ContentPage>

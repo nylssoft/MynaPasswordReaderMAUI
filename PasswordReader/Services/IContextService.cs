@@ -35,6 +35,10 @@ namespace PasswordReader.Services
 
         Task<string> EncodePasswordAsync(string password);
 
+        Task<List<ContactItem>> GetContactItemsAsync();
+
+        Task UploadContactItemsAsync(List<ContactItem> items);
+
         Task<List<Note>> GetNotesAsync();
 
         Task<Note> GetNoteAsync(long noteId);
@@ -88,6 +92,8 @@ namespace PasswordReader.Services
         bool PasswordChanged { get; set; }
 
         bool DiaryChanged { get; set; }
+
+        bool ContactChanged { get; set; }
 
         string StartPage { get; set; }
     }

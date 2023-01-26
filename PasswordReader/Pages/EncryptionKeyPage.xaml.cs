@@ -1,6 +1,6 @@
 /*
     Myna Password Reader MAUI
-    Copyright (C) 2022 Niels Stockfleth
+    Copyright (C) 2022-2023 Niels Stockfleth
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@ public partial class EncryptionKeyPage : ContentPage
             _model.EncryptionKey = HIDDEN;
         }
         encryptionKeyEntry.IsPassword = true;
+        encryptionKeyEntry.IsReadOnly = true;
         showEncryptionKeyButton.Source = "eyedark.png";
     }
 
@@ -57,6 +58,7 @@ public partial class EncryptionKeyPage : ContentPage
                 _model.EncryptionKey = _savedEncryptionKey;
             }
             encryptionKeyEntry.IsPassword = false;
+            encryptionKeyEntry.IsReadOnly = false;
             showEncryptionKeyButton.Source = "eyeslashdark.png";
         }
         else
@@ -67,6 +69,7 @@ public partial class EncryptionKeyPage : ContentPage
                 _model.EncryptionKey = HIDDEN;
             }
             encryptionKeyEntry.IsPassword = true;
+            encryptionKeyEntry.IsReadOnly = true;
             showEncryptionKeyButton.Source = "eyedark.png";
         }
     }
@@ -89,8 +92,10 @@ public partial class EncryptionKeyPage : ContentPage
             // force reload
             _model.SelectedPasswordItem = null;
             _model.SelectedNoteItem = null;
+            _model.SelectedContactItem = null;
             _model.PasswordItems = null;
             _model.NoteItems = null;
+            _model.ContactItems = null;
             await Shell.Current.GoToAsync(App.ContextService.StartPage);
         }
         catch (Exception ex)
@@ -111,6 +116,7 @@ public partial class EncryptionKeyPage : ContentPage
                 if (encryptionKeyEntry.IsPassword)
                 {
                     encryptionKeyEntry.IsPassword = false;
+                    encryptionKeyEntry.IsReadOnly = false;
                     showEncryptionKeyButton.Source = "eyeslashdark.png";
                 }
             }

@@ -48,6 +48,11 @@
         Route="documentlist"/>
 
     <ShellContent
+        Title="Kontakte"
+        ContentTemplate="{DataTemplate page:ContactListPage}"
+        Route="contactlist"/>
+
+    <ShellContent
         Title="Profil"
         ContentTemplate="{DataTemplate page:ProfilePage}"
         Route="profile"/>

@@ -1,6 +1,6 @@
 ﻿/*
     Myna Password Reader MAUI
-    Copyright (C) 2022 Niels Stockfleth
+    Copyright (C) 2022-2023 Niels Stockfleth
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ public partial class AppShell : Shell
         Routing.RegisterRoute("passworditem", typeof(PasswordItemPage));
         Routing.RegisterRoute("noteitem", typeof(NoteItemPage));
         Routing.RegisterRoute("diaryitem", typeof(DiaryItemPage));
+        Routing.RegisterRoute("contactitem", typeof(ContactItemPage));
     }
 
     protected override async void OnAppearing()
@@ -58,7 +59,8 @@ public partial class AppShell : Shell
         if (App.ContextService.IsLoggedIn() && (
             App.ContextService.NoteChanged |
             App.ContextService.PasswordChanged ||
-            App.ContextService.DiaryChanged))
+            App.ContextService.DiaryChanged ||
+            App.ContextService.ContactChanged))
         {
             ShellNavigatingDeferral token = args.GetDeferral();
             var leavePage = await DisplayAlert("Seite verlassen", "Die Änderungen wurden nicht gespeichert. Willst Du die Seite wirklich verlassen?", "Ja", "Nein");
@@ -67,6 +69,7 @@ public partial class AppShell : Shell
                 App.ContextService.NoteChanged = false;
                 App.ContextService.PasswordChanged = false;
                 App.ContextService.DiaryChanged = false;
+                App.ContextService.ContactChanged = false;
             }
             else
             {

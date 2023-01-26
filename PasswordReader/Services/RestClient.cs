@@ -136,6 +136,23 @@ namespace PasswordReader.Services
             return await response.Content.ReadFromJsonAsync<bool>();
         }
 
+        public static async Task<string> GetContactsAsync(string token)
+        {
+            RemoveDefaultRequestHeaders();
+            httpClient.DefaultRequestHeaders.Add("token", token);
+            var response = await httpClient.GetAsync("api/contacts");
+            await EnsureSuccessAsync(response);
+            return await response.Content.ReadFromJsonAsync<string>();
+        }
+
+        public static async Task SetContactsAsync(string token, string encodedContacts)
+        {
+            RemoveDefaultRequestHeaders();
+            httpClient.DefaultRequestHeaders.Add("token", token);
+            var response = await httpClient.PutAsJsonAsync("api/contacts", encodedContacts);
+            await EnsureSuccessAsync(response);
+        }
+
         public static async Task<string> GetPasswordFileAsync(string token)
         {
             RemoveDefaultRequestHeaders();
