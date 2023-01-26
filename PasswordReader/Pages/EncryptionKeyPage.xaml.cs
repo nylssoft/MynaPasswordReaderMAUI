@@ -43,10 +43,16 @@ public partial class EncryptionKeyPage : ContentPage
         {
             _savedEncryptionKey = await App.ContextService.GetEncryptionKeyAsync();
             _model.EncryptionKey = HIDDEN;
+            encryptionKeyEntry.IsPassword = true;
+            encryptionKeyEntry.IsReadOnly = true;
+            showEncryptionKeyButton.Source = "eyedark.png";
         }
-        encryptionKeyEntry.IsPassword = true;
-        encryptionKeyEntry.IsReadOnly = true;
-        showEncryptionKeyButton.Source = "eyedark.png";
+        else
+        {
+            encryptionKeyEntry.IsPassword = false;
+            encryptionKeyEntry.IsReadOnly = false;
+            showEncryptionKeyButton.Source = "eyeslashdark.png";
+        }
     }
 
     private void ShowEncryptionKey_Clicked(object sender, EventArgs e)

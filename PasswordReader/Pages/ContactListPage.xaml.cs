@@ -118,7 +118,11 @@ public partial class ContactListPage : ContentPage
             return;
         }
         _model.IsRunning = true;
-        var nextId = _model.ContactItems.Max(x => x.Id) + 1;
+        long nextId = 1;
+        if (_model.ContactItems.Any())
+        {
+            nextId = _model.ContactItems.Max(x => x.Id) + 1;
+        }
         var contactitemmodel = new ContactItemViewModel
         {
             Id = nextId,

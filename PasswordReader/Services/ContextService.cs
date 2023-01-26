@@ -359,9 +359,13 @@ namespace PasswordReader.Services
             try
             {
                 var encrypted = await RestClient.GetContactsAsync(_token);
-                var json = DecodeText(encrypted);
-                var contactData = JsonSerializer.Deserialize<ContactData>(json);
-                return contactData.items;
+                if (!string.IsNullOrEmpty(encrypted))
+                {
+                    var json = DecodeText(encrypted);
+                    var contactData = JsonSerializer.Deserialize<ContactData>(json);
+                    return contactData.items;
+                }
+                return new List<ContactItem>();
             }
             catch (InvalidTokenException ex)
             {
@@ -375,9 +379,14 @@ namespace PasswordReader.Services
             if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
             var encryptionKey = await GetEncryptionKeyAsync();
             if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
+            long nextId = 1;
+            if (contactItems.Any())
+            {
+                nextId = contactItems.Max(x => x.id) + 1;
+            }
             var contactData = new ContactData();
             contactData.version = 1;
-            contactData.nextId = contactItems.Max(x => x.id) + 1;
+            contactData.nextId = nextId;
             contactData.items = contactItems.OrderBy(x => x.id).ToList();
             try
             {
