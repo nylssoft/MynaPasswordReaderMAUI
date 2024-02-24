@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:PasswordReader"
     xmlns:page="clr-namespace:PasswordReader.Pages"
-    FlyoutBackgroundColor="Black">
+    FlyoutBackgroundColor="#222222">
     
     <ShellContent
         Title="Anmelden"
@@ -51,6 +51,11 @@
         Title="Kontakte"
         ContentTemplate="{DataTemplate page:ContactListPage}"
         Route="contactlist"/>
+
+    <ShellContent
+        Title="Bilderrahmen"
+        ContentTemplate="{DataTemplate page:PhotoFramePage}"
+        Route="photoframe"/>
 
     <ShellContent
         Title="Profil"

@@ -287,6 +287,15 @@ namespace PasswordReader.Services
             await EnsureSuccessAsync(response);
         }
 
+        public static async Task<string> GetFamilyAccessTokenAsync(string token)
+        {
+            RemoveDefaultRequestHeaders();
+            httpClient.DefaultRequestHeaders.Add("token", token);
+            var response = await httpClient.GetAsync("api/pwdman/familyaccesstoken");
+            await EnsureSuccessAsync(response);
+            return await response.Content.ReadFromJsonAsync<string>();
+        }
+
         private static async Task EnsureSuccessAsync(HttpResponseMessage response)
         {
             if (response.StatusCode != System.Net.HttpStatusCode.OK)

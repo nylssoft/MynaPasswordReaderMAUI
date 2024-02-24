@@ -19,6 +19,7 @@ namespace PasswordReader.Services
 {
     public interface IContextService
     {
+
         Task LoginAsync(string username, string password);
 
         Task Login2FAAsync(string securityCode);
@@ -58,6 +59,8 @@ namespace PasswordReader.Services
         Task<List<DocumentItem>> GetDocumentItemsAsync(long? currentId = null);
 
         Task<byte[]> DownloadDocumentAsync(long id);
+
+        Task<string> GetFamilyAccessTokenAsync();
 
         Task LogoutAsync();
 

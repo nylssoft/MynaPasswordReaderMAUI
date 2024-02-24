@@ -629,6 +629,13 @@ namespace PasswordReader.Services
             }
         }
 
+        public async Task<string> GetFamilyAccessTokenAsync()
+        {
+            if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
+            var familyAccessToken = await RestClient.GetFamilyAccessTokenAsync(_token);
+            return familyAccessToken;
+        }
+
         public string GetUsername()
         {
             if (_loggedIn)
