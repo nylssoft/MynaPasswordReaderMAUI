@@ -185,7 +185,8 @@ namespace PasswordReader.Services
             RemoveDefaultRequestHeaders();
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.PostAsJsonAsync("api/notes/note",
-                new {
+                new
+                {
                     Title = title
                 });
             await EnsureSuccessAsync(response);
@@ -205,10 +206,12 @@ namespace PasswordReader.Services
             RemoveDefaultRequestHeaders();
             httpClient.DefaultRequestHeaders.Add("token", token);
             var response = await httpClient.PutAsJsonAsync("api/notes/note",
-                new {
+                new
+                {
                     Id = id,
-                    Title = title, 
-                    Content = content});
+                    Title = title,
+                    Content = content
+                });
             await EnsureSuccessAsync(response);
             var lastModifiedUtc = await response.Content.ReadFromJsonAsync<DateTime>();
             return lastModifiedUtc;

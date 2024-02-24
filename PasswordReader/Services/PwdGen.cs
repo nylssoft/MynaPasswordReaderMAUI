@@ -52,12 +52,12 @@ namespace APIServer.PasswordGenerator
                 sb.Append(Digits);
             }
             string all = sb.ToString();
-            List<int> numbers = new();
+            List<int> numbers = [];
             for (int idx = 0; idx < Length; idx++)
             {
                 numbers.Add(idx); // 0 => 0, 1 => 1, etc
             }
-            List<int> positions = new();
+            List<int> positions = [];
             while (numbers.Count > 0)
             {
                 var nidx = numbers.Count == 1 ? 0 : Next(numbers.Count);
@@ -76,7 +76,7 @@ namespace APIServer.PasswordGenerator
             return ret;
         }
 
-        private static void Draw(  char[] pwd,
+        private static void Draw(char[] pwd,
                             ref int drawidx,
                             int drawcnt,
                             string symbols,

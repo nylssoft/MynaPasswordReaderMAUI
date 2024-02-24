@@ -21,11 +21,11 @@ namespace PasswordReader.Pages;
 
 public partial class ProfilePage : ContentPage
 {
-    private ContextViewModel _model;
+    private readonly ContextViewModel _model;
 
     public ProfilePage()
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
         _model = App.ContextViewModel;
     }
 

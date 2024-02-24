@@ -48,7 +48,7 @@ namespace PasswordReader.Pages
             _width = w;
             canvas.FontSize = 14;
             canvas.FontColor = Colors.White;
-            for (int x=0; x<7; x++)
+            for (int x = 0; x < 7; x++)
             {
                 canvas.DrawString(days[x], x * w + w / 2, w / 2 + w / 4, HorizontalAlignment.Center);
             }
@@ -57,11 +57,11 @@ namespace PasswordReader.Pages
             var today = DateTime.Now;
             for (int y = 0; y < 6; y++)
             {
-                canvas.FillColor = y % 2 == 0 ? Color.FromRgb(100,149,237) : Color.FromRgb(30, 144, 255);
+                canvas.FillColor = y % 2 == 0 ? Color.FromRgb(100, 149, 237) : Color.FromRgb(30, 144, 255);
                 for (int x = 0; x < 7; x++)
                 {
                     canvas.FillRectangle(x * w, y * w + w, w, w);
-                    if (y == 0 && x < firstDay  || day > daysInMonth)
+                    if (y == 0 && x < firstDay || day > daysInMonth)
                     {
                         continue;
                     }

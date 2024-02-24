@@ -23,11 +23,11 @@ namespace PasswordReader.Pages;
 
 public partial class NoteListPage : ContentPage
 {
-    private ContextViewModel _model;
+    private readonly ContextViewModel _model;
 
     public NoteListPage()
-	{
-	    InitializeComponent();
+    {
+        InitializeComponent();
         _model = App.ContextViewModel;
         BindingContext = _model;
         _model.SelectedNoteItem = new();
@@ -56,7 +56,7 @@ public partial class NoteListPage : ContentPage
             if (_model.NoteItems == null || _model.HasErrorMessage)
             {
                 _model.IsRunning = true;
-                _model.NoteItems = new ObservableCollection<NoteItemViewModel>();
+                _model.NoteItems = [];
                 var noteItems = await App.ContextService.GetNotesAsync();
                 foreach (var noteItem in noteItems)
                 {
@@ -95,11 +95,13 @@ public partial class NoteListPage : ContentPage
             {
                 _model.IsRunning = true;
                 var note = await App.ContextService.GetNoteAsync(n.Id);
-                _model.SelectedNoteItem = new();
-                _model.SelectedNoteItem.Id = note.id;
-                _model.SelectedNoteItem.Title = note.title;
-                _model.SelectedNoteItem.Content = note.content;
-                _model.SelectedNoteItem.LastModified = note.lastModifiedUtc.Value.ToLocalTime().ToString("g", new CultureInfo("de-DE"));
+                _model.SelectedNoteItem = new()
+                {
+                    Id = note.id,
+                    Title = note.title,
+                    Content = note.content,
+                    LastModified = note.lastModifiedUtc.Value.ToLocalTime().ToString("g", new CultureInfo("de-DE"))
+                };
                 var navigationParameter = new Dictionary<string, object>()
                 {
                     { "item", _model.SelectedNoteItem }

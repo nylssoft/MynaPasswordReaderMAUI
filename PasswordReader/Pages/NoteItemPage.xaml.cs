@@ -28,8 +28,8 @@ public partial class NoteItemPage : ContentPage
     private readonly IDispatcherTimer _timer;
 
     public NoteItemPage()
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
         _model = new NoteItemViewModel();
         _timer = Dispatcher.CreateTimer();
         _timer.Interval = TimeSpan.FromSeconds(2);

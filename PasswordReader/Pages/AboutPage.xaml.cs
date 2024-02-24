@@ -20,8 +20,8 @@ namespace PasswordReader.Pages;
 public partial class AboutPage : ContentPage
 {
     public AboutPage()
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
         BindingContext = this;
     }
 

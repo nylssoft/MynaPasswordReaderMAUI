@@ -22,18 +22,18 @@ namespace PasswordReader.Pages;
 
 public partial class EncryptionKeyPage : ContentPage
 {
-    private ContextViewModel _model;
+    private readonly ContextViewModel _model;
 
     private string _savedEncryptionKey;
 
     private const string HIDDEN = "*********";
 
     public EncryptionKeyPage()
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
         _model = App.ContextViewModel;
         BindingContext = _model;
-	}
+    }
 
     protected async override void OnAppearing()
     {

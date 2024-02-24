@@ -22,11 +22,11 @@ namespace PasswordReader.Pages;
 
 public partial class PasswordListPage : ContentPage
 {
-    private ContextViewModel _model;
+    private readonly ContextViewModel _model;
 
     public PasswordListPage()
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
         _model = App.ContextViewModel;
         BindingContext = _model;
     }
@@ -37,7 +37,7 @@ public partial class PasswordListPage : ContentPage
         App.ContextService.StartPage = "//passwordlist";
         if (_model.PasswordItems == null || _model.HasErrorMessage)
         {
-            _model.PasswordItems = new ObservableCollection<PasswordItemViewModel>();
+            _model.PasswordItems = [];
             if (App.ContextService.HasPasswordItems())
             {
                 await GetPasswordItemsAsync();

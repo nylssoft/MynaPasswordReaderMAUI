@@ -21,14 +21,14 @@ namespace PasswordReader.Pages;
 
 public partial class LoginPage : ContentPage
 {
-    private ContextViewModel _model;
+    private readonly ContextViewModel _model;
 
-	public LoginPage()
-	{
-		InitializeComponent();
+    public LoginPage()
+    {
+        InitializeComponent();
         _model = App.ContextViewModel;
         BindingContext = _model;
-	}
+    }
 
     private async void LoginToken_Clicked(object sender, EventArgs e)
     {
@@ -51,18 +51,18 @@ public partial class LoginPage : ContentPage
     }
 
     private async void Login_Clicked(object sender, EventArgs e)
-	{
-		try
-		{
+    {
+        try
+        {
             _model.IsRunning = true;
             await App.ContextService.LoginAsync(_model.Username, _model.Password);
             await _model.InitAsync();
             await GotoNextPage();
         }
         catch (Exception ex)
-		{
+        {
             await DisplayAlert("Fehler", ex.Message, "OK");
-		}
+        }
         finally
         {
             _model.IsRunning = false;

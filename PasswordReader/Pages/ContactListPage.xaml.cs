@@ -16,17 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using PasswordReader.ViewModels;
-using System.Collections.ObjectModel;
 
 namespace PasswordReader.Pages;
 
 public partial class ContactListPage : ContentPage
 {
-    private ContextViewModel _model;
+    private readonly ContextViewModel _model;
 
     public ContactListPage()
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
         _model = App.ContextViewModel;
         BindingContext = _model;
     }
@@ -37,7 +36,7 @@ public partial class ContactListPage : ContentPage
         App.ContextService.StartPage = "//contactlist";
         if (_model.ContactItems == null || _model.HasErrorMessage)
         {
-            _model.ContactItems = new ObservableCollection<ContactItemViewModel>();
+            _model.ContactItems = [];
             await GetContactItemsAsync();
         }
     }

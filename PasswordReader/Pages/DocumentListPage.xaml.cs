@@ -23,18 +23,18 @@ namespace PasswordReader.Pages;
 
 public partial class DocumentListPage : ContentPage
 {
-    private ContextViewModel _model;
+    private readonly ContextViewModel _model;
 
     public DocumentListPage()
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
         _model = App.ContextViewModel;
         BindingContext = _model;
     }
 
     protected async override void OnAppearing()
-	{
-		base.OnAppearing();
+    {
+        base.OnAppearing();
         App.ContextService.StartPage = "//documentlist";
         if (_model.DocumentItems == null || _model.HasErrorMessage)
         {
@@ -42,7 +42,7 @@ public partial class DocumentListPage : ContentPage
         }
     }
 
-    private DocumentItemViewModel GetDocumentItemViewModel(DocumentItem item)
+    private static DocumentItemViewModel GetDocumentItemViewModel(DocumentItem item)
     {
         return new DocumentItemViewModel
         {
@@ -66,11 +66,8 @@ public partial class DocumentListPage : ContentPage
             var items = await App.ContextService.GetDocumentItemsAsync(id);
             var volume = GetDocumentItemViewModel(items.First((i) => i.type == "Volume"));
             _model.CurrentDocumentItem = id == null ? volume : GetDocumentItemViewModel(items.First((i) => i.id == id));
-            if (id == null)
-            {
-                id = volume.Id;
-            }
-            _model.DocumentItems = new ObservableCollection<DocumentItemViewModel>();
+            id ??= volume.Id;
+            _model.DocumentItems = [];
             var docs = items.Where(i => i.type == "Document" && i.accessRole == null).OrderBy(i => i.name);
             var folders = items.Where(i => i.type == "Folder" && i.parentId == id && i.accessRole == null).OrderBy(i => i.name);
             foreach (var folder in folders)
@@ -91,7 +88,7 @@ public partial class DocumentListPage : ContentPage
         }
     }
 
-    private async Task<string> DownloadAsync(long id, string name)
+    private static async Task<string> DownloadAsync(long id, string name)
     {
         var ext = Path.GetExtension(name).ToLowerInvariant();
         var data = await App.ContextService.DownloadDocumentAsync(id);
@@ -134,9 +131,7 @@ public partial class DocumentListPage : ContentPage
     {
         if (e.CurrentSelection.Count == 1)
         {
-            var selected = e.CurrentSelection[0] as DocumentItemViewModel;
-            var view = sender as CollectionView;
-            if (view != null && selected != null)
+            if (sender is CollectionView view && e.CurrentSelection[0] is DocumentItemViewModel selected)
             {
                 await ProcessDocumentItem(view, selected);
             }

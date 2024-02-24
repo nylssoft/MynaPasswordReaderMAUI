@@ -640,7 +640,7 @@ namespace PasswordReader.Services
 
         public string GetEmailAddress()
         {
-            if  (_loggedIn)
+            if (_loggedIn)
             {
                 return _userModel.email;
             }
@@ -723,7 +723,7 @@ namespace PasswordReader.Services
             return ret;
         }
 
-        private static byte[] DecryptData(byte[] data, byte [] key)
+        private static byte[] DecryptData(byte[] data, byte[] key)
         {
             byte[] iv = data[0..12];
             byte[] chipherText = data[12..^16];

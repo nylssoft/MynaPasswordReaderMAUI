@@ -62,7 +62,7 @@ namespace PasswordReader.Services
         Task LogoutAsync();
 
         bool IsLoggedIn();
-        
+
         bool Requires2FA();
 
         bool RequiresPin();

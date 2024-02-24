@@ -27,8 +27,8 @@ public partial class ContactItemPage : ContentPage
     private readonly IDispatcherTimer _timer;
 
     public ContactItemPage()
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
         _model = new ContactItemViewModel();
         _timer = Dispatcher.CreateTimer();
         _timer.Interval = TimeSpan.FromSeconds(2);
@@ -119,7 +119,7 @@ public partial class ContactItemPage : ContentPage
         _item.Name = _model.Name;
         _item.Address = _model.Address;
         _item.Phone = _model.Phone;
-        _item.Birthday= _model.Birthday;
+        _item.Birthday = _model.Birthday;
         _item.Email = _model.Email;
         _item.Note = _model.Note;
         try
@@ -140,7 +140,7 @@ public partial class ContactItemPage : ContentPage
                 }
                 App.ContextViewModel.ContactItems.Insert(pos, _item);
             }
-             App.ContextService.ContactChanged = false;
+            App.ContextService.ContactChanged = false;
             _model.Changed = false;
             _model.IsRunning = false;
             SetStatusMessage("Kontakt gespeichert.");

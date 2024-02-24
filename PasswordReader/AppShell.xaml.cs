@@ -22,12 +22,12 @@ namespace PasswordReader;
 
 public partial class AppShell : Shell
 {
-    private ContextViewModel _model;
+    private readonly ContextViewModel _model;
     private bool _init;
 
     public AppShell()
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
         _model = App.ContextViewModel;
         BindingContext = _model;
         Routing.RegisterRoute("passworditem", typeof(PasswordItemPage));
@@ -57,7 +57,7 @@ public partial class AppShell : Shell
     {
         base.OnNavigating(args);
         if (App.ContextService.IsLoggedIn() && (
-            App.ContextService.NoteChanged |
+            App.ContextService.NoteChanged ||
             App.ContextService.PasswordChanged ||
             App.ContextService.DiaryChanged ||
             App.ContextService.ContactChanged))

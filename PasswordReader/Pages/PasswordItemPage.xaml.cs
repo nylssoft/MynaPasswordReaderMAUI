@@ -24,16 +24,16 @@ namespace PasswordReader.Pages;
 public partial class PasswordItemPage : ContentPage
 {
     private readonly PasswordItemViewModel _model;
-    
+
     private string _encryptedPassword;
-    
+
     private readonly IDispatcherTimer _timer;
 
     private const string HIDDEN = "*********";
 
     public PasswordItemPage()
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
         _model = new PasswordItemViewModel();
         _timer = Dispatcher.CreateTimer();
         _timer.Interval = TimeSpan.FromSeconds(2);
@@ -251,8 +251,10 @@ public partial class PasswordItemPage : ContentPage
             if (urlChanged)
             {
                 // fetch image url again
-                PasswordItem p = new();
-                p.Url = _item.Url;
+                PasswordItem p = new()
+                {
+                    Url = _item.Url
+                };
                 _item.ImageUrl = p.ImageUrl;
             }
             if (nameChanged)

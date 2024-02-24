@@ -17,8 +17,7 @@
 */
 namespace PasswordReader.Services
 {
-    public class InvalidTokenException : Exception
+    public class InvalidTokenException(string message) : Exception(message)
     {
-        public InvalidTokenException(string message) : base(message) {}
     }
 }

@@ -295,7 +295,7 @@ namespace PasswordReader.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DocumentItems)));
             }
         }
-        
+
         private DocumentItemViewModel _currentDocumentItem;
         public DocumentItemViewModel CurrentDocumentItem
         {
@@ -323,6 +323,8 @@ namespace PasswordReader.ViewModels
 
         public bool CanLogout => _isLoggedIn || _requires2FA;
 
+        public bool CanCreateContact => _isLoggedIn && !string.IsNullOrEmpty(_encryptionKey) && !_isRunning && string.IsNullOrEmpty(_errorMessage);
+
         public bool CanCreateNote => _isLoggedIn && !string.IsNullOrEmpty(_encryptionKey) && !_isRunning && string.IsNullOrEmpty(_errorMessage);
 
         public bool CanCreatePassword => _isLoggedIn && !string.IsNullOrEmpty(_encryptionKey) && !_isRunning && string.IsNullOrEmpty(_errorMessage);
@@ -345,6 +347,7 @@ namespace PasswordReader.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanLogout)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanConfirmSecurityCode)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanConfirmPin)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreateContact)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreateNote)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreatePassword)));
             }
@@ -360,6 +363,7 @@ namespace PasswordReader.ViewModels
                 _errorMessage = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ErrorMessage)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasErrorMessage)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreateContact)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreateNote)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCreatePassword)));
             }
@@ -369,7 +373,7 @@ namespace PasswordReader.ViewModels
 
         public async Task UploadPasswordItemsAsync()
         {
-            List<PasswordItem> pwditems = new();
+            List<PasswordItem> pwditems = [];
             foreach (var itemModel in _passwordItems)
             {
                 pwditems.Add(new PasswordItem
@@ -386,7 +390,7 @@ namespace PasswordReader.ViewModels
 
         public async Task UploadContactItemsAsync()
         {
-            List<ContactItem> contactitems = new();
+            List<ContactItem> contactitems = [];
             foreach (var itemModel in _contactItems)
             {
                 contactitems.Add(new ContactItem

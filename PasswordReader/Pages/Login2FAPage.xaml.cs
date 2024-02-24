@@ -21,14 +21,14 @@ namespace PasswordReader.Pages;
 
 public partial class Login2FAPage : ContentPage
 {
-    private ContextViewModel _model;
+    private readonly ContextViewModel _model;
 
-	public Login2FAPage()
-	{
-		InitializeComponent();
+    public Login2FAPage()
+    {
+        InitializeComponent();
         _model = App.ContextViewModel;
         BindingContext = _model;
-	}
+    }
 
     private async void Confirm_Clicked(object sender, EventArgs e)
     {

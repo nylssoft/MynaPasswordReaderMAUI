@@ -21,14 +21,14 @@ namespace PasswordReader.Pages;
 
 public partial class DiaryPage : ContentPage
 {
-	private readonly DiaryViewModel _model;
+    private readonly DiaryViewModel _model;
 
-	public DiaryPage()
-	{
-		InitializeComponent();
-		_model = new DiaryViewModel();
+    public DiaryPage()
+    {
+        InitializeComponent();
+        _model = new DiaryViewModel();
         BindingContext = _model;
-	}
+    }
 
     protected async override void OnAppearing()
     {
@@ -38,7 +38,7 @@ public partial class DiaryPage : ContentPage
     }
 
     private async void GraphicsView_StartInteraction(object sender, TouchEventArgs e)
-	{
+    {
         if (e.Touches.Length == 1)
         {
             var touch = e.Touches[0];
@@ -90,13 +90,13 @@ public partial class DiaryPage : ContentPage
     }
 
     private async void Left_Clicked(object sender, EventArgs e)
-	{
-		var next = _model.Month - 1;
-		if (next <= 0)
-		{
-			next = 12;
-			_model.Year -= 1;
-		}
+    {
+        var next = _model.Month - 1;
+        if (next <= 0)
+        {
+            next = 12;
+            _model.Year -= 1;
+        }
         _model.Month = next;
         await UpdateCalendarAsync();
     }
@@ -113,8 +113,8 @@ public partial class DiaryPage : ContentPage
         await UpdateCalendarAsync();
     }
 
-	private async Task UpdateCalendarAsync()
-	{
+    private async Task UpdateCalendarAsync()
+    {
         _model.ErrorMessage = "";
         _model.Days = null;
         try

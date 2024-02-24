@@ -21,11 +21,11 @@ namespace PasswordReader.Pages;
 
 public partial class LoginPinPage : ContentPage
 {
-    private ContextViewModel _model;
+    private readonly ContextViewModel _model;
 
     public LoginPinPage()
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
         _model = App.ContextViewModel;
         BindingContext = _model;
     }
