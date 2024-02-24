@@ -64,10 +64,7 @@ namespace PasswordReader.Services
         {
             get
             {
-                if (_startPage == null)
-                {
-                    _startPage = Preferences.Default.Get(nameof(StartPage), "//passwordlist");
-                }
+                _startPage ??= Preferences.Default.Get(nameof(StartPage), "//passwordlist");
                 return _startPage;
             }
             set
@@ -147,10 +144,10 @@ namespace PasswordReader.Services
                 _requires2FA = false;
                 _requiresPin = false;
             }
-            catch (InvalidTokenException ex)
+            catch (InvalidTokenException)
             {
                 await LogoutAsync();
-                throw ex;
+                throw;
             }
         }
 
@@ -265,10 +262,7 @@ namespace PasswordReader.Services
             if (_loginToken == null)
             {
                 _loginToken = await SecureStorage.Default.GetAsync("lltoken");
-                if (_loginToken == null)
-                {
-                    _loginToken = "";
-                }
+                _loginToken ??= "";
             }
             return !string.IsNullOrEmpty(_loginToken);
         }
@@ -279,10 +273,7 @@ namespace PasswordReader.Services
             if (_encryptionKey == null)
             {
                 var storageValue = await SecureStorage.Default.GetAsync(StorageKey);
-                if (storageValue == null)
-                {
-                    storageValue = await MigrateEncryptionKeyAsync();
-                }
+                storageValue ??= await MigrateEncryptionKeyAsync();
                 if (storageValue == null)
                 {
                     _encryptionKey = "";
@@ -365,12 +356,12 @@ namespace PasswordReader.Services
                     var contactData = JsonSerializer.Deserialize<ContactData>(json);
                     return contactData.items;
                 }
-                return new List<ContactItem>();
+                return [];
             }
-            catch (InvalidTokenException ex)
+            catch (InvalidTokenException)
             {
                 await LogoutAsync();
-                throw ex;
+                throw;
             }
         }
 
@@ -380,24 +371,26 @@ namespace PasswordReader.Services
             var encryptionKey = await GetEncryptionKeyAsync();
             if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
             long nextId = 1;
-            if (contactItems.Any())
+            if (contactItems.Count != 0)
             {
                 nextId = contactItems.Max(x => x.id) + 1;
             }
-            var contactData = new ContactData();
-            contactData.version = 1;
-            contactData.nextId = nextId;
-            contactData.items = contactItems.OrderBy(x => x.id).ToList();
+            var contactData = new ContactData
+            {
+                version = 1,
+                nextId = nextId,
+                items = [.. contactItems.OrderBy(x => x.id)]
+            };
             try
             {
                 var json = JsonSerializer.Serialize(contactData);
                 var encoded = EncodeText(json);
                 await RestClient.SetContactsAsync(_token, encoded);
             }
-            catch (InvalidTokenException ex)
+            catch (InvalidTokenException)
             {
                 await LogoutAsync();
-                throw ex;
+                throw;
             }
         }
 
@@ -412,10 +405,10 @@ namespace PasswordReader.Services
                 var encrypted = await RestClient.GetPasswordFileAsync(_token);
                 return DecryptPasswordItems(encrypted);
             }
-            catch (InvalidTokenException ex)
+            catch (InvalidTokenException)
             {
                 await LogoutAsync();
-                throw ex;
+                throw;
             }
         }
 
@@ -435,10 +428,10 @@ namespace PasswordReader.Services
                     _userModel.hasPasswordManagerFile = true;
                 }
             }
-            catch (InvalidTokenException ex)
+            catch (InvalidTokenException)
             {
                 await LogoutAsync();
-                throw ex;
+                throw;
             }
         }
 
@@ -462,7 +455,7 @@ namespace PasswordReader.Services
 
         public async Task<List<Note>> GetNotesAsync()
         {
-            List<Note> ret = new();
+            List<Note> ret = [];
             if (!_loggedIn) throw new ArgumentException("Du bist nicht angemeldet.");
             var encryptionKey = await GetEncryptionKeyAsync();
             if (string.IsNullOrEmpty(encryptionKey)) throw new ArgumentException("Es wurde kein Schlüssel konfiguriert.");
@@ -476,10 +469,10 @@ namespace PasswordReader.Services
                 }
                 return ret;
             }
-            catch (InvalidTokenException ex)
+            catch (InvalidTokenException)
             {
                 await LogoutAsync();
-                throw ex;
+                throw;
             }
         }
 
@@ -495,10 +488,10 @@ namespace PasswordReader.Services
                 note.content = DecodeText(note.content);
                 return note;
             }
-            catch (InvalidTokenException ex)
+            catch (InvalidTokenException)
             {
                 await LogoutAsync();
-                throw ex;
+                throw;
             }
         }
 
@@ -513,10 +506,10 @@ namespace PasswordReader.Services
                 var noteid = await RestClient.CreateNewNoteAsync(_token, encryptedTitle);
                 return noteid;
             }
-            catch (InvalidTokenException ex)
+            catch (InvalidTokenException)
             {
                 await LogoutAsync();
-                throw ex;
+                throw;
             }
         }
 
@@ -527,10 +520,10 @@ namespace PasswordReader.Services
             {
                 await RestClient.DeleteNoteAsync(_token, id);
             }
-            catch (InvalidTokenException ex)
+            catch (InvalidTokenException)
             {
                 await LogoutAsync();
-                throw ex;
+                throw;
             }
         }
 
@@ -545,10 +538,10 @@ namespace PasswordReader.Services
             {
                 return await RestClient.UpdateNoteAsync(_token, id, encryptedTitle, encryptedContent);
             }
-            catch (InvalidTokenException ex)
+            catch (InvalidTokenException)
             {
                 await LogoutAsync();
-                throw ex;
+                throw;
             }
         }
 
@@ -559,10 +552,10 @@ namespace PasswordReader.Services
             {
                 return await RestClient.GetDiaryDaysAsync(_token, year, month);
             }
-            catch (InvalidTokenException ex)
+            catch (InvalidTokenException)
             {
                 await LogoutAsync();
-                throw ex;
+                throw;
             }
         }
 
@@ -577,10 +570,10 @@ namespace PasswordReader.Services
                 diary.entry = DecodeText(diary.entry);
                 return diary;
             }
-            catch (InvalidTokenException ex)
+            catch (InvalidTokenException)
             {
                 await LogoutAsync();
-                throw ex;
+                throw;
             }
         }
 
@@ -598,10 +591,10 @@ namespace PasswordReader.Services
             {
                 await RestClient.SaveDiaryAsync(_token, year, month, day, encryptedEntry);
             }
-            catch (InvalidTokenException ex)
+            catch (InvalidTokenException)
             {
                 await LogoutAsync();
-                throw ex;
+                throw;
             }
         }
 
@@ -612,10 +605,10 @@ namespace PasswordReader.Services
             {
                 return await RestClient.GetDocumentItemsAsync(_token, currentId);
             }
-            catch (InvalidTokenException ex)
+            catch (InvalidTokenException)
             {
                 await LogoutAsync();
-                throw ex;
+                throw;
             }
         }
 
@@ -629,10 +622,10 @@ namespace PasswordReader.Services
                 var encryptedData = await RestClient.DownloadDocumentAsync(_token, id);
                 return DecryptData(encryptedData, _cryptoKey);
             }
-            catch (InvalidTokenException ex)
+            catch (InvalidTokenException)
             {
                 await LogoutAsync();
-                throw ex;
+                throw;
             }
         }
 
@@ -719,7 +712,7 @@ namespace PasswordReader.Services
             }
             var encoded = new byte[data.Length];
             var tag = new byte[16];
-            using (var cipher = new AesGcm(key))
+            using (var cipher = new AesGcm(key, tag.Length))
             {
                 cipher.Encrypt(iv, data, encoded, tag);
             }
@@ -736,7 +729,7 @@ namespace PasswordReader.Services
             byte[] chipherText = data[12..^16];
             byte[] tag = data[^16..];
             byte[] plainText = new byte[chipherText.Length];
-            using (var cipher = new AesGcm(key))
+            using (var cipher = new AesGcm(key, tag.Length))
             {
                 try
                 {
