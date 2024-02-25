@@ -1,6 +1,6 @@
 ﻿/*
     Myna Password Reader MAUI
-    Copyright (C) 2022 Niels Stockfleth
+    Copyright (C) 2022-2024 Niels Stockfleth
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+using Microsoft.Extensions.Logging;
 using PasswordReader.Services;
 using PasswordReader.ViewModels;
 
@@ -34,6 +35,9 @@ public static class MauiProgram
             });
         builder.Services.AddSingleton<IContextService, ContextService>();
         builder.Services.AddSingleton<ContextViewModel>();
+#if DEBUG
+    		builder.Logging.AddDebug();
+#endif
         return builder.Build();
     }
 }
