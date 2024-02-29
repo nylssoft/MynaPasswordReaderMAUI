@@ -34,9 +34,7 @@ public partial class PhotoFramePage : ContentPage
     protected async override void OnAppearing()
     {
         base.OnAppearing();
-        App.ContextService.StartPage = "//photoframe";
         Uri uri = new($"https://www.stockfleth.eu/webpack/tsphotoframe/index.html?v={DateTime.Now.Ticks}", UriKind.RelativeOrAbsolute);
-#if ANDROID
         string familyAccessToken = "";
         if (_model.IsLoggedIn)
         {
@@ -51,6 +49,8 @@ public partial class PhotoFramePage : ContentPage
             Secure = true
         };
         cookieContainer.Add(uri, cookie);
+        // crashes currently on windows
+#if ANDROID
         webView.Cookies = cookieContainer;
 #endif
         webView.Source = new UrlWebViewSource { Url = uri.ToString() };

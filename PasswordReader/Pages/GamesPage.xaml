@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PasswordReader.Pages.GamesPage"
+             Title="Spiele">
+    <ScrollView>
+        <Grid RowDefinitions="60,100,100,100" Margin="10,0,0,0">
+            <HorizontalStackLayout>
+                <Label Text="Arkanoid" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <ImageButton Source="https://www.stockfleth.eu/images/buttons/development-gtk-48.png" WidthRequest="48" HeightRequest="48" Clicked="OnArkanoidClicked"/>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout Grid.Row="1">
+                <Label Text="Backgammon" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <ImageButton Source="https://www.stockfleth.eu/images/buttons/gnubg-48.png" WidthRequest="48" HeightRequest="48" Clicked="OnBackgammonClicked"/>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout Grid.Row="2">
+                <Label Text="Schach" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <ImageButton Source="https://www.stockfleth.eu/images/buttons/gnome-chess-48.png" WidthRequest="48" HeightRequest="48" Clicked="OnChessClicked"/>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout Grid.Row="3">
+                <Label Text="Tetris" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <ImageButton Source="https://www.stockfleth.eu/images/buttons/gpe-tetris-48.png" WidthRequest="48" HeightRequest="48" Clicked="OnTetrisClicked"/>
+            </HorizontalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>
