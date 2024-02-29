@@ -27,7 +27,7 @@ public partial class GameArkanoidPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        Uri uri = new("https://www.stockfleth.eu/arkanoid?embedded=true", UriKind.RelativeOrAbsolute);
+        Uri uri = new("https://www.stockfleth.eu/arkanoid?embedded", UriKind.RelativeOrAbsolute);
         webView.Source = new UrlWebViewSource { Url = uri.ToString() };
     }
 }

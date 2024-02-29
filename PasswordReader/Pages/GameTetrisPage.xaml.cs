@@ -27,7 +27,7 @@ public partial class GameTetrisPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        Uri uri = new($"https://www.stockfleth.eu/webpack/tstetris/index.html?v={DateTime.Now.Ticks}", UriKind.RelativeOrAbsolute);
+        Uri uri = new($"https://www.stockfleth.eu/webpack/tstetris/index.html?embedded&v={DateTime.Now.Ticks}", UriKind.RelativeOrAbsolute);
         webView.Source = new UrlWebViewSource { Url = uri.ToString() };
     }
 }
