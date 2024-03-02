@@ -90,7 +90,7 @@
         Shell.FlyoutItemIsVisible="False"/>
 
     <ShellContent
-        Title="Chess"
+        Title="Schach"
         ContentTemplate="{DataTemplate page:GameChessPage}"
         Route="chess"
         Shell.FlyoutItemIsVisible="False"/>
@@ -99,6 +99,12 @@
         Title="Backgammon"
         ContentTemplate="{DataTemplate page:GameBackgammonPage}"
         Route="backgammon"
+        Shell.FlyoutItemIsVisible="False"/>
+
+    <ShellContent
+        Title="Skat"
+        ContentTemplate="{DataTemplate page:GameSkatPage}"
+        Route="skat"
         Shell.FlyoutItemIsVisible="False"/>
 
     <ShellContent

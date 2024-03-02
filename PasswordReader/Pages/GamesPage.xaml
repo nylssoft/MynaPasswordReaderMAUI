@@ -4,7 +4,7 @@
              x:Class="PasswordReader.Pages.GamesPage"
              Title="Spiele">
     <ScrollView>
-        <Grid RowDefinitions="60,100,100,100" Margin="10,0,0,0">
+        <Grid RowDefinitions="60,100,100,100,100" Margin="10,0,0,0">
             <HorizontalStackLayout>
                 <Label Text="Arkanoid" VerticalOptions="Center" Margin="0,0,10,0"/>
                 <ImageButton Source="https://www.stockfleth.eu/images/buttons/development-gtk-48.png" WidthRequest="48" HeightRequest="48" Clicked="OnArkanoidClicked"/>
@@ -20,6 +20,10 @@
             <HorizontalStackLayout Grid.Row="3">
                 <Label Text="Tetris" VerticalOptions="Center" Margin="0,0,10,0"/>
                 <ImageButton Source="https://www.stockfleth.eu/images/buttons/gpe-tetris-48.png" WidthRequest="48" HeightRequest="48" Clicked="OnTetrisClicked"/>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout Grid.Row="4">
+                <Label Text="Skat" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <ImageButton Source="https://www.stockfleth.eu/images/buttons/games-card_game-48.png" WidthRequest="48" HeightRequest="48" Clicked="OnSkatClicked"/>
             </HorizontalStackLayout>
         </Grid>
     </ScrollView>

@@ -17,6 +17,8 @@ public partial class GamesPage : ContentPage
 
     private void OnTetrisClicked(object sender, EventArgs e) => GoTo("//tetris");
 
+    private void OnSkatClicked(object sender, EventArgs e) => GoTo("//skat");
+
     private async void GoTo(string page)
     {
         try
