@@ -1,0 +1,18 @@
+name: Test Build Myna PasswordReader MAUI
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Build
+      run: dotnet build
+      # TODO
+      # dotnet publish -f:net8.0-android -c:Release /p:AndroidSigningKeyPass="${{ secrets.SIGNING_KEY_PASS }}" /p:AndroidSigningStorePass="${{ secrets.SIGNING_STORE_PASS }}"
