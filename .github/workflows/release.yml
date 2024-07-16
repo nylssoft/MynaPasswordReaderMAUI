@@ -13,6 +13,8 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Create keystore
-      run: \[Convert\]::FromBase64String("${{ secrets.KEYSTORE_BASE64 }}") | Set-Content -Path PasswordReader/myapp.keystore -AsByteStream -Value
+      run: |
+        $bytes = [Convert]::FromBase64String('${{ secrets.KEY_STORE_BASE64 }}')
+        Set-Content -Path PasswordReader/myapp.keystore -AsByteStream -Value $bytes
     - name: Build
       run: dotnet publish -f:net8.0-android -c:Release /p:AndroidSigningKeyPass="${{ secrets.KEY_SIGN_PASS }}" /p:AndroidSigningStorePass="${{ secrets.KEY_STORE_PASS }}"
