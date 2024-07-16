@@ -1,4 +1,4 @@
-name: Test Build Myna PasswordReader MAUI
+name: Test Secrets
 on: workflow_dispatch
 jobs:
   build:
