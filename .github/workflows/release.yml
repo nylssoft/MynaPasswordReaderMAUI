@@ -1,8 +1,5 @@
 name: Release Myna PasswordReader MAUI
-on:
-  push:
-    tags:
-      - "v*"
+on: workflow_dispatch
 jobs:
   build:
     runs-on: windows-latest
@@ -22,6 +19,6 @@ jobs:
     - name: Build
       run: dotnet publish -f:net8.0-android -c:Release /p:AndroidSigningKeyPass='${{ secrets.KEY_SIGN_PASS }}' /p:AndroidSigningStorePass='${{ secrets.KEY_STORE_PASS }}'
     - name: Copy APK
-      run: Copy-Item "PasswordReader\bin\Release\net8.0-android\publish\eu.stockfleth.passwordreader-Signed.apk" "MynaPasswordReaderMAUI-${{ github.ref_name }}.apk"
+      run: Copy-Item "PasswordReader\bin\Release\net8.0-android\publish\eu.stockfleth.passwordreader-Signed.apk" "MynaPasswordReaderMAUI-1.0.16.apk"
     - name: Create github release
-      run: gh release create "${{ github.ref_name }}" "MynaPasswordReaderMAUI-${{ github.ref_name }}.apk"
+      run: gh release create "${{ github.ref_name }}" "MynaPasswordReaderMAUI-1.0.16.apk"
