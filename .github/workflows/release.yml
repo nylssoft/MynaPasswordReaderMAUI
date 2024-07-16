@@ -12,7 +12,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
+    - name: Create keystore
+      run: \[Convert\]::FromBase64String("${{ secrets.KEYSTORE_BASE64 }}") | Set-Content -Path PasswordReader/myapp.keystore -AsByteStream -Value
     - name: Build
-      run: dotnet build
-      # TODO
-      # dotnet publish -f:net8.0-android -c:Release /p:AndroidSigningKeyPass="${{ secrets.SIGNING_KEY_PASS }}" /p:AndroidSigningStorePass="${{ secrets.SIGNING_STORE_PASS }}"
+      run: dotnet publish -f:net8.0-android -c:Release /p:AndroidSigningKeyPass="${{ secrets.KEY_SIGN_PASS }}" /p:AndroidSigningStorePass="${{ secrets.KEY_STORE_PASS }}"
