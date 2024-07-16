@@ -8,4 +8,4 @@ jobs:
         TEST_SECRET: ${{ secrets.TEST_SECRET }}
     steps:
     - name: Test
-      run: Write-Output $env:TEST_SECRET
+      run: Write-Output "Hello Secret: $env:TEST_SECRET"
