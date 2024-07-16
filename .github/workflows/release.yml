@@ -17,4 +17,4 @@ jobs:
         $bytes = [Convert]::FromBase64String('${{ secrets.KEY_STORE_BASE64 }}')
         Set-Content -Path PasswordReader/myapp.keystore -AsByteStream -Value $bytes
     - name: Build
-      run: dotnet publish -f:net8.0-android -c:Release /p:AndroidSigningKeyPass="${{ secrets.KEY_SIGN_PASS }}" /p:AndroidSigningStorePass="${{ secrets.KEY_STORE_PASS }}"
+      run: dotnet publish -f:net8.0-android -c:Release /p:AndroidSigningKeyPass='${{ secrets.KEY_SIGN_PASS }}' /p:AndroidSigningStorePass='${{ secrets.KEY_STORE_PASS }}'
