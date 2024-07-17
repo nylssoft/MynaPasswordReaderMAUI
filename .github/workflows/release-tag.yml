@@ -1,0 +1,27 @@
+name: Release Myna PasswordReader MAUI
+on:
+  push:
+    tags:
+      - "v*"
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Create key store
+      run: |
+        $bytes = [Convert]::FromBase64String('${{ secrets.KEY_STORE_BASE64 }}')
+        Set-Content -Path PasswordReader/myapp.keystore -AsByteStream -Value $bytes
+    - name: Build
+      run: dotnet publish -f:net8.0-android -c:Release /p:AndroidSigningKeyPass='${{ secrets.KEY_SIGN_PASS }}' /p:AndroidSigningStorePass='${{ secrets.KEY_STORE_PASS }}'
+    - name: Copy APK
+      run: Copy-Item "PasswordReader\bin\Release\net8.0-android\publish\eu.stockfleth.passwordreader-Signed.apk" "MynaPasswordReaderMAUI-${{ github.ref_name }}.apk"
+    - name: Create github release
+      run: gh release create "${{ github.ref_name }}" "MynaPasswordReaderMAUI-${{ github.ref_name }}.apk"
