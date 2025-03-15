@@ -18,6 +18,7 @@
 using PasswordReader.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using Microsoft.Maui.ApplicationModel.Communication;
 
 namespace PasswordReader.ViewModels
 {

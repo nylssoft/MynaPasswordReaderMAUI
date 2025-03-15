@@ -17,6 +17,7 @@
 */
 using PasswordReader.ViewModels;
 using System.Net;
+using Microsoft.Maui.Devices;
 
 namespace PasswordReader.Pages;
 

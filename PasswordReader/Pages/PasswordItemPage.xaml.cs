@@ -17,6 +17,8 @@
 */
 using PasswordReader.Services;
 using PasswordReader.ViewModels;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.ApplicationModel.DataTransfer;
 
 namespace PasswordReader.Pages;
 

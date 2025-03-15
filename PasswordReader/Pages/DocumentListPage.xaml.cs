@@ -18,6 +18,8 @@
 using PasswordReader.Services;
 using PasswordReader.ViewModels;
 using System.Collections.ObjectModel;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Storage;
 
 namespace PasswordReader.Pages;
 

@@ -1,3 +1,4 @@
+using Microsoft.Maui.ApplicationModel;
 /*
     Myna Password Reader MAUI
     Copyright (C) 2022 Niels Stockfleth

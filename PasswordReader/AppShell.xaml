@@ -11,55 +11,55 @@
         Title="Anmelden"
         ContentTemplate="{DataTemplate page:LoginPage}"
         Route="login"
-        Shell.FlyoutItemIsVisible="{Binding CanLogin}"/>
+        FlyoutItemIsVisible="{Binding CanLogin}"/>
 
     <ShellContent
         Title="Sicherheitscode"
         ContentTemplate="{DataTemplate page:Login2FAPage}"
         Route="login2fa"
-        Shell.FlyoutItemIsVisible="{Binding Requires2FA}"/>
+        FlyoutItemIsVisible="{Binding Requires2FA}"/>
 
     <ShellContent
         Title="PIN"
         ContentTemplate="{DataTemplate page:LoginPinPage}"
         Route="loginpin"
-        Shell.FlyoutItemIsVisible="{Binding RequiresPin}"/>
+        FlyoutItemIsVisible="{Binding RequiresPin}"/>
 
     <ShellContent
         Title="Schlüssel"
         ContentTemplate="{DataTemplate page:EncryptionKeyPage}"
         Route="encryptionkey"
-        Shell.FlyoutItemIsVisible="{Binding IsLoggedIn}"/>
+        FlyoutItemIsVisible="{Binding IsLoggedIn}"/>
 
     <ShellContent
         Title="Kennwörter"
         ContentTemplate="{DataTemplate page:PasswordListPage}"
         Route="passwordlist"
-        Shell.FlyoutItemIsVisible="{Binding IsLoggedIn}"/>
+        FlyoutItemIsVisible="{Binding IsLoggedIn}"/>
 
     <ShellContent
         Title="Notizen"
         ContentTemplate="{DataTemplate page:NoteListPage}"
         Route="notelist"
-        Shell.FlyoutItemIsVisible="{Binding IsLoggedIn}"/>
+        FlyoutItemIsVisible="{Binding IsLoggedIn}"/>
 
     <ShellContent
         Title="Tagebuch"
         ContentTemplate="{DataTemplate page:DiaryPage}"
         Route="diary"
-        Shell.FlyoutItemIsVisible="{Binding IsLoggedIn}"/>
+        FlyoutItemIsVisible="{Binding IsLoggedIn}"/>
 
     <ShellContent
         Title="Dokumente"
         ContentTemplate="{DataTemplate page:DocumentListPage}"
         Route="documentlist"
-        Shell.FlyoutItemIsVisible="{Binding IsLoggedIn}"/>
+        FlyoutItemIsVisible="{Binding IsLoggedIn}"/>
 
     <ShellContent
         Title="Kontakte"
         ContentTemplate="{DataTemplate page:ContactListPage}"
         Route="contactlist"
-        Shell.FlyoutItemIsVisible="{Binding IsLoggedIn}"/>
+        FlyoutItemIsVisible="{Binding IsLoggedIn}"/>
 
     <ShellContent
         Title="Bilder"
@@ -70,7 +70,7 @@
         Title="Profil"
         ContentTemplate="{DataTemplate page:ProfilePage}"
         Route="profile"
-        Shell.FlyoutItemIsVisible="{Binding IsLoggedIn}"/>
+        FlyoutItemIsVisible="{Binding IsLoggedIn}"/>
 
     <ShellContent
         Title="Spiele"
@@ -81,31 +81,31 @@
         Title="Arkanoid"
         ContentTemplate="{DataTemplate page:GameArkanoidPage}"
         Route="arkanoid"
-        Shell.FlyoutItemIsVisible="False"/>
+        FlyoutItemIsVisible="False"/>
 
     <ShellContent
         Title="Tetris"
         ContentTemplate="{DataTemplate page:GameTetrisPage}"
         Route="tetris"
-        Shell.FlyoutItemIsVisible="False"/>
+        FlyoutItemIsVisible="False"/>
 
     <ShellContent
         Title="Schach"
         ContentTemplate="{DataTemplate page:GameChessPage}"
         Route="chess"
-        Shell.FlyoutItemIsVisible="False"/>
+        FlyoutItemIsVisible="False"/>
 
     <ShellContent
         Title="Backgammon"
         ContentTemplate="{DataTemplate page:GameBackgammonPage}"
         Route="backgammon"
-        Shell.FlyoutItemIsVisible="False"/>
+        FlyoutItemIsVisible="False"/>
 
     <ShellContent
         Title="Skat"
         ContentTemplate="{DataTemplate page:GameSkatPage}"
         Route="skat"
-        Shell.FlyoutItemIsVisible="False"/>
+        FlyoutItemIsVisible="False"/>
 
     <ShellContent
         Title="Über"
